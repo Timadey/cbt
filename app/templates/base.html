@@ -1,0 +1,33 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}
+ {% if title %}
+    {{ title }} - CBT
+    {% else %}
+    CBT
+    {% endif %}
+{% endblock title %}
+
+{% block navbar %}
+ <h1> CBT </h1>
+    <div>
+        <span> <a href="{{ url_for('new_examination') }}"> (Create Examination) </a> </span> |
+
+    </div>
+    <hr>
+{% endblock navbar %}
+
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    {% endwith %}
+        {% block app_content %}{% endblock %}
+</div>
+{% endblock content %}

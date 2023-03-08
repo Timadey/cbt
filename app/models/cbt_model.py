@@ -24,10 +24,10 @@ class CbtModel():
     """
 
     # Map attributes to table columns
-    id = Column(String(60), nullable=False, unique=True, primary_key=True)
+    id = Column(String(60), nullable=False, unique=True,
+                primary_key=True)
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     modified_at = Column(DateTime, nullable=False, default=datetime.now())
-    _attr = ['id', 'created_at', 'date_modiefied']
 
     def __init__(self, **kwargs):
         """Initializes the model

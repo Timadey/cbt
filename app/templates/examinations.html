@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+<div class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Examination</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Date Added</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for  examination in examinations  %}
+                <tr>
+                    <th scope="row">{{ '#' }}</th>
+                    <td><a href="{{url_for('examination', id=examination.id )}}">{{ examination.name }}</button></td>
+                    <td>{{ examination.start_date }}</td>
+                    <td>{{ examination.end_date }}</td>
+                    <td>{{ examination.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+</div>
+{% endblock %}

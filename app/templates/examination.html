@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <div class="row">
+            <h2>{{ examination.name }}</h2>
+            {% for subject in examination.subjects %}
+            <div class="panel">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class='col-md-2'>{{ subject.name }}</div>
+                        <div class='col-md-2'>
+                            <a href="{{ url_for('question', id=subject.questions(examination.id)[0].id) }}?subject={{subject.id}}">
+                                <button class="btn btn-info">
+                                    {{ subject.questions(examination.id)[0].questions_dict|length }} Questions
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+{% endblock app_content %}
