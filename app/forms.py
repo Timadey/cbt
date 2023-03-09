@@ -3,7 +3,8 @@
 """
 import datetime
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, DateTimeLocalField, DateTimeField, SelectMultipleField, SelectField
+from wtforms import SubmitField, StringField, DateTimeLocalField, DateTimeField,\
+    SelectMultipleField, SelectField, FieldList, FormField, TextAreaField
 from wtforms.validators import InputRequired, DataRequired
 from wtforms.widgets import DateTimeInput, Select, DateTimeLocalInput
 
@@ -29,3 +30,18 @@ class SubjectForm(FlaskForm):
         InputRequired('Name of examination is required')])
     teacher = SelectField('Teacher')
     submit = SubmitField('Create Subject')
+
+
+class QuestionForm(FlaskForm):
+    """A single Question form"""
+    question = StringField('Question')
+    options = TextAreaField(
+        'Option', description='Options separated by new lines')
+    correct_option = SelectField('Correct Options', choices=[
+                                 ('1', '4'), ('2', '5')])
+    add = SubmitField('Add')
+
+
+class QuestionPaperForm(FlaskForm):
+    questions = FieldList(FormField(QuestionForm))
+    save = SubmitField('Save')

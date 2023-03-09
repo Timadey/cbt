@@ -24,7 +24,8 @@ class QuestionPaper(CbtModel, db.Model):
     subject_id = Column(String(60), ForeignKey('subjects.id'), nullable=False)
     examination_id = Column(String(60), ForeignKey(
         'examinations.id'), nullable=True)
-    questions = Column('questions', JSON, nullable=True)
+    questions = Column('questions', JSON, nullable=True,
+                       default=json.dumps({}))
     start_date = Column('start_date', DateTime,
                         default=datetime.utcnow(), nullable=True)
     end_date = Column('end_date', DateTime,
@@ -35,6 +36,22 @@ class QuestionPaper(CbtModel, db.Model):
         """Loads the json format of the questions as a python dictionary"""
         questions = json.loads(self.questions)
         return questions
+
+    @property
+    def total_questions(self) -> int:
+        return len(self.questions_dict)
+
+    @property
+    def examination(self):
+        """Return the examination of this question paper"""
+        from app import Examination
+        return Examination.query.get(self.examination_id)
+
+    @property
+    def subject(self):
+        """Return the subject of this question paper"""
+        from app import Subject
+        return Subject.query.get(self.subject_id)
 
 
 class Subject(CbtModel, db.Model):

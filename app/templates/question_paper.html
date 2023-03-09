@@ -1,6 +1,48 @@
 {% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
 {% block app_content %}
 
-{{ question_paper.to_dict() }}
+<div class="question_paper">
+    <h2>Examination: {{ question_paper.examination.name }} </h2>
+    <p><b>Subject: {{ question_paper.subject.name }} </b></p>
+    <p><b>Total Questions: {{ question_paper.total_questions }} </b></p>
+    <p>Start: {{ question_paper.start_date }} </p>
+    <p>End: {{ question_paper.end_date }} </p>
+    <hr>
+    <p> There are no questions here yet. Add some questions </p>
+    <h4>New Question</h6>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(question_form) }}
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        {% if question_paper.questions %}
+            {% for num, question in question_paper.questions_dict.items()|sort %}
+            <div class="col-md-6">
+                <div class="panel">
+                    <div class="panel-title">{{num}}.) {{question.get('question') }}</div>
+                    <div class="panel-body">
+                        <div class="row">
+                        <p>Options</p>
+                            {% for option in question.get('options') %}
+                            {# <div class='col-md-2'> #}
+                                {{loop.index}}.) {{option}}<br>
+                            {# </div> #}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {# {% else %} #}
 
+        {# <div class="col-md-4">
+            {{ wtf.quick_form(question_paper_form) }}
+        </div> #}
+        {% endif %}
+    </div>
+</div>
 {% endblock app_content %}
