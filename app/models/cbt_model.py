@@ -22,7 +22,6 @@ class CbtModel():
         `created_at (datetime)`: the date this model was created
         `modified_at (datetime)`: the date this model was modified
     """
-
     # Map attributes to table columns
     id = Column(String(60), nullable=False, unique=True,
                 primary_key=True)

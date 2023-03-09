@@ -5,21 +5,7 @@
 from app import db
 from .cbt_model import CbtModel
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, DateTime
-
-
-# """allowed_subject (Table)
-# The list of subjects that are allowed in an examination
-# This is neccessary so that the super teacher can set a list of subject that can be in an
-# examination preventing other teachers from adding subjects and questions that shouldn't be
-# in the exam
-# """
-# allowed_subjects = Table('allowed_subjects',
-#                          Column('subject_id', String(60),
-#                                 ForeignKey(Subject.id)),
-#                          Column('examination_id', String(60),
-#                                 ForeignKey('examinations.id')),
-#                          Column('date_added', DateTime, default=datetime.utcnow()))
+from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
 
 
 class Examination(CbtModel, db.Model):
@@ -31,7 +17,8 @@ class Examination(CbtModel, db.Model):
         `start_date (datetime)`: Date and time the exam is starting
         `end_date (datetime)`: Date and time the exam is ending
         `subjects (List[models.Subject])`: Subjects to tested in the examination
-        `papers (List[models.Paper])`: All question papers in the examination
+        `question (List[models.QuestionPaper])`: All question papers in the examination
+        `students`: List of students that took this examination
     """
 
     # Map attributes with database columns
@@ -41,3 +28,17 @@ class Examination(CbtModel, db.Model):
     end_date = Column(DateTime, nullable=False)
     subjects = relationship(
         'Subject', secondary='question_papers', back_populates='examinations')
+    questions = relationship('QuestionPaper', viewonly=True)
+    students = relationship(
+        'Student', secondary='results', back_populates='examinations')
+    results = relationship('Result', viewonly=True)
+
+
+class Result(CbtModel, db.Model):
+    """Result of an examination. A weak entity between students and examination"""
+    __tablename__ = 'results'
+    examination_id = Column(String(60), ForeignKey(
+        'examinations.id'), nullable=False)
+    student_id = Column(String(60), ForeignKey('students.id'), nullable=False)
+    score = Column(Integer, nullable=True)
+    time_submitted = Column(DateTime, nullable=True)

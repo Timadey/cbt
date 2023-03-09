@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'teacher/base.html' %}
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
@@ -10,7 +10,7 @@
     <p>Start: {{ question_paper.start_date }} </p>
     <p>End: {{ question_paper.end_date }} </p>
     <hr>
-    <p> There are no questions here yet. Add some questions </p>
+    {# <p> There are no questions here yet. Add some questions </p> #}
     <h4>New Question</h6>
     <div class="row">
         <div class="col-md-4">
@@ -23,7 +23,12 @@
             {% for num, question in question_paper.questions_dict.items()|sort %}
             <div class="col-md-6">
                 <div class="panel">
-                    <div class="panel-title">{{num}}.) {{question.get('question') }}</div>
+                    <div class="panel-title">{{num}}.) {{question.get('question') }}
+                    <a href="{{ url_for('examination_question', exam_id=question_paper.examination_id,
+                    subject=question_paper.subject_id, edit_num=num) }}">
+                    <button class="btn btn-primary">Edit</button>
+                    </a>
+                    </div>
                     <div class="panel-body">
                         <div class="row">
                         <p>Options</p>

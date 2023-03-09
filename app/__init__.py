@@ -13,5 +13,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 bootstrap = Bootstrap(app)
 
-from .models import CbtModel, Examination, Teacher, Subject, QuestionPaper
+from .models import CbtModel, Examination, Teacher,\
+    Subject, QuestionPaper, Student, Result
 from app import routes

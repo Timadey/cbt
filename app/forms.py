@@ -4,7 +4,7 @@
 import datetime
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, StringField, DateTimeLocalField, DateTimeField,\
-    SelectMultipleField, SelectField, FieldList, FormField, TextAreaField
+    SelectMultipleField, SelectField, FieldList, FormField, TextAreaField, IntegerField
 from wtforms.validators import InputRequired, DataRequired
 from wtforms.widgets import DateTimeInput, Select, DateTimeLocalInput
 
@@ -36,10 +36,13 @@ class QuestionForm(FlaskForm):
     """A single Question form"""
     question = StringField('Question')
     options = TextAreaField(
-        'Option', description='Options separated by new lines')
-    correct_option = SelectField('Correct Options', choices=[
-                                 ('1', '4'), ('2', '5')])
-    add = SubmitField('Add')
+        'Option',
+        description='''Options separated by new lines. Enter each option on a different line.
+        No double lines''')
+    correct_option = StringField(
+        'Correct Options', description='''Example: 1 if first option is the correct option.
+        2 if the second option is correct instead''')
+    add_or_save = SubmitField('Add or Save Edit')
 
 
 class QuestionPaperForm(FlaskForm):

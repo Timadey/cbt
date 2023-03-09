@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'teacher/base.html' %}
 
 {% block app_content %}
     <div class="row">
@@ -9,9 +9,9 @@
                     <div class="row">
                         <div class='col-md-2'>{{ subject.name }}</div>
                         <div class='col-md-2'>
-                            <a href="{{ url_for('question', id=subject.questions(examination.id)[0].id) }}?subject={{subject.id}}">
+                            <a href="{{ url_for('examination_question', exam_id=examination.id) }}?subject={{subject.id}}">
                                 <button class="btn btn-info">
-                                    {{ subject.questions(examination.id)[0].questions_dict|length }} Questions
+                                    {{ subject.exam_question(examination.id)[0].questions_dict|length }} Questions
                                 </button>
                             </a>
                         </div>

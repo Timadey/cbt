@@ -7,30 +7,33 @@ from flask import flash, redirect, url_for, render_template, request
 from app import app, db, Examination, Subject, Teacher, QuestionPaper
 from app.forms import ExaminationForm, SubjectForm, QuestionForm, QuestionPaperForm
 
+#####################################################
+# ADMIN or Teachers routes
+#####################################################
 
-@app.route('/')
+@app.route('/teacher')
 def dashboard():
     return 'CBT'
 
 
-@app.route('/examinations', methods=['GET'])
-def examinations():
+@app.route('/teacher/examination', methods=['GET'])
+def examination():
     """Get all examinations
     """
     exams = Examination.query.order_by(Examination.start_date.desc()).all()
-    return render_template('examinations.html', examinations=exams)
+    return render_template('teacher/examinations.html', examinations=exams)
 
 
-@app.route('/examination/<string:id>', methods=['GET'])
-def examination(id: str):
+@app.route('/teacher/examination/<string:id>', methods=['GET'])
+def examination_id(id: str):
     """Get a specific examination
     """
     exam = Examination.query.get_or_404(id)
-    return render_template('examination.html', examination=exam)
+    return render_template('teacher/examination.html', examination=exam)
 
 
-@app.route('/examination/new', methods=['GET', 'POST'])
-def new_examination():
+@app.route('/teacher/examination/new', methods=['GET', 'POST'])
+def examination_new():
     """Create a new examination period
     """
     form = ExaminationForm()
@@ -45,12 +48,12 @@ def new_examination():
         db.session.add(exam)
         db.session.commit()
         flash(f'New Examination created: {exam.name}')
-        return redirect(url_for('examinations'))
-    return render_template('new_examination.html', form=form)
+        return redirect(url_for('examination'))
+    return render_template('teacher/new_examination.html', form=form)
 
 
-@app.route('/subject/new', methods=['GET', 'POST'])
-def new_subject():
+@app.route('/teacher/subject/new', methods=['GET', 'POST'])
+def subject_new():
     """Create a new Subject
     """
     form = SubjectForm()
@@ -63,36 +66,49 @@ def new_subject():
         db.session.add(subject)
         db.session.commit()
         flash(f'New Subject added: {subject.name}')
-        return redirect(url_for('new_subject'))
-    return render_template('new_subject.html', form=form)
+        return redirect(url_for('subject_new'))
+    return render_template('teacher/new_subject.html', form=form)
 
 
-@app.route('/question/<int:id>', methods=['GET', 'POST'])
-def question(id: int):
+@app.route('/teacher/examination/question/<string:exam_id>', methods=['GET', 'POST'])
+def examination_question(exam_id: str):
     """Get a particular question
     """
+    # Get arguments
+    # edit_num is the question number to edit in a question paper, if exist
     subject_id = request.args.get('subject')
     edit_num = request.args.get('edit_num', type=str)
+    # Get the question paper
     question_paper = QuestionPaper.query.where(
-        QuestionPaper.id == id, QuestionPaper.subject_id == subject_id).one_or_404()
+        QuestionPaper.examination_id == exam_id, QuestionPaper.subject_id == subject_id).one_or_404()
+
+    # If edit_num is present in args, get the question to edit from
+    # the dictionary of questions and initialise the question form with the
+    # question. If the question does not exist in the dictionary of questions in a
+    # question paper, return redirect to this endpoint without the edit_num arg
     if edit_num is not None:
         que_ = question_paper.questions_dict.get(edit_num)
-    question_form = QuestionForm(obj=que_)
-    question_form.correct_option.choices = [('1', '9')]
-    # question_paper_form = QuestionPaperForm()
+        if que_ is None:
+            return redirect(url_for('examination_question', exam_id=exam_id, subject=subject_id))
+        que_['options'] = '\n'.join(que_['options'])
+        question_form = QuestionForm(**que_)
+    else:
+        question_form = QuestionForm()
+    # future: implement dynamic choices for correct option
     if question_form.validate_on_submit():
-        #     question_paper_form.questions.append_entry(question_form)
-        #     # return redirect(url_for('question', id=id, subject=subject_id))
-        # if question_paper_form.validate_on_submit():
-        #     # save question paper
-        #     question_paper.question = question_paper_form.questions.object_data
-        num = len(question_paper.questions_dict) + 1
+        if edit_num is not None:
+            num = edit_num
+        else:
+            num = len(question_paper.questions_dict) + 1
+        options = question_form.options.data.split('\n')
+        correct_option = options[int(question_form.correct_option.data) - 1]
         single_question = {
             num: {
                 'question': question_form.question.data,
-                # future: ensure to check to multiple line breaks in options
-                'options': question_form.options.data.split('\n'),
-                'correct_option': question_form.correct_option.data
+                # future: ensure to check for multiple line breaks in options
+                # to ensure proper split
+                'options': options,
+                'correct_option': correct_option
             }
         }
         que = json.loads(question_paper.questions)
@@ -100,10 +116,14 @@ def question(id: int):
         question_paper.questions = json.dumps(que)
         db.session.add(question_paper)
         db.session.commit()
-        return redirect(url_for('question', id=id, subject=subject_id))
-    return render_template('question_paper.html', question_paper=question_paper, question_form=question_form)
+        return redirect(url_for('examination_question', exam_id=exam_id, subject=subject_id))
+    return render_template('teacher/question_paper.html', question_paper=question_paper, question_form=question_form)
 
 
-# @app.route('/question/<int:id>', methods=['POST'])
-# def add_question(id: int):
-#     """"""
+#####################################################
+# Students or Teachers routes
+#####################################################
+
+@app.route('/examination/write/<string:exam_id', methods=['GET'])
+def examination_write(exam_id: str):
+    pass

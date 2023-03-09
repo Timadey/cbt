@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'teacher/base.html' %}
 
 {% block app_content %}
 <div class="row">
@@ -16,7 +16,7 @@
             {% for  examination in examinations  %}
                 <tr>
                     <th scope="row">{{ '#' }}</th>
-                    <td><a href="{{url_for('examination', id=examination.id )}}">{{ examination.name }}</button></td>
+                    <td><a href="{{url_for('examination_id', id=examination.id )}}">{{ examination.name }}</button></td>
                     <td>{{ examination.start_date }}</td>
                     <td>{{ examination.end_date }}</td>
                     <td>{{ examination.created_at }}</td>

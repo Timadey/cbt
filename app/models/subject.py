@@ -69,8 +69,10 @@ class Subject(CbtModel, db.Model):
     teacher_id = Column(String(60), ForeignKey('teachers.id'), nullable=False)
     examinations = relationship(
         'Examination', secondary='question_papers', back_populates='subjects')
+    questions = relationship('QuestionPaper', viewonly=True)
 
-    def questions(self, exam_id: str = None):
+
+    def exam_question(self, exam_id: str = None):
         """Return a list of question paper for this subject or just one for an exam
         """
         from sqlalchemy import select
