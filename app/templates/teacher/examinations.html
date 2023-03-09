@@ -2,10 +2,11 @@
 
 {% block app_content %}
 <div class="row">
+        <div><h2>All Examinations</h2></div>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col">SN</th>
                     <th scope="col">Examination</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">End Date</th>
@@ -15,7 +16,7 @@
             <tbody>
             {% for  examination in examinations  %}
                 <tr>
-                    <th scope="row">{{ '#' }}</th>
+                    <th scope="row">{{ loop.index }}</th>
                     <td><a href="{{url_for('examination_id', id=examination.id )}}">{{ examination.name }}</button></td>
                     <td>{{ examination.start_date }}</td>
                     <td>{{ examination.end_date }}</td>

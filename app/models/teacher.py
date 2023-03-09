@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 """A teacher is able to create questions for the subjects assigned to him
 """
-from .cbt_model import CbtModel
+from app.models.user import User
+from app.models.cbt_model import CbtModel
 from app import db
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
-class Teacher(CbtModel, db.Model):
+class Teacher(User, db.Model):
     """Teacher creates questions for subjects assigned
 
     Inherits `models.User`
@@ -15,6 +16,6 @@ class Teacher(CbtModel, db.Model):
 
     # Map attributes to models
     __tablename__ = 'teachers'
-    name = Column(String(128), nullable=False)
-    email = Column(String(128), nullable=False, unique=True)
+    # name = Column(String(128), nullable=False)
+    # email = Column(String(128), nullable=False, unique=True)
     subjects = relationship('Subject', backref='teacher')

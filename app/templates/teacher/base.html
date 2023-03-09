@@ -9,12 +9,54 @@
 {% endblock title %}
 
 {% block navbar %}
- <h1> CBT </h1>
-    <div>
-        <span> <a href="{{ url_for('examination_new') }}"> (Create Examination) </a> </span> |
+<div class="row" >
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid" style="padding-right: 5%;">
+
+        <!-- BRAND -->
+        <div class="navbar-header" style="padding-left: 3%;padding-right: 3%;">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                data-target="#alignment-example" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{url_for('dashboard')}}">CBT</a>
+        </div>
+
+        <!-- COLLAPSIBLE NAVBAR -->
+        <div class="collapse navbar-collapse" id="alignment-example">
+
+            <!-- Links -->
+            {% if not current_user.is_anonymous %}
+            <ul class="nav navbar-nav">
+                <li><a href="{{url_for('examination_new')}}">New Examination</a></li>
+                <li><a href="{{url_for('examination')}}"> All Examinations</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">Subject<span class="caret"></span></a>
+                    <ul class="dropdown-menu" aria-labelledby="about-us">
+                        <li><a href="{{url_for('subject_new')}}">New Subject</a></li>
+                        <li><a href="{{url_for('subject')}}">Subjects</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="{{url_for('teacher_logout')}}"><button type="button" class="btn btn-default btn-danger navbar-btn navbar-right">Logout</button></a>
+            {% else %}
+            <!-- Button -->
+            <a href="{{url_for('teacher_login')}}"><button type="button" class="btn btn-default navbar-btn navbar-right">Login</button></a>
+            <a href="{{url_for('teacher_register')}}"><button type="button" class="btn btn-default navbar-btn navbar-right">Register</button></a>
+
+            {% endif %}
+
+
+        </div>
 
     </div>
-    <hr>
+</nav>
+</div>
 {% endblock navbar %}
 
 {% block content %}
@@ -23,11 +65,16 @@
         {% if messages %}
         <ul>
             {% for message in messages %}
+        <div class="alert alert-{{message.category}} block-message" role="alert">
+
             <li>{{ message }}</li>
+        </div>
+
             {% endfor %}
         </ul>
         {% endif %}
     {% endwith %}
         {% block app_content %}{% endblock %}
 </div>
+
 {% endblock content %}

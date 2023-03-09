@@ -11,12 +11,35 @@
     <p>End: {{ question_paper.end_date }} </p>
     <hr>
     {# <p> There are no questions here yet. Add some questions </p> #}
-    <h4>New Question</h6>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.quick_form(question_form) }}
+
+    <!-- Start Model -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#smallShoes">
+        Add or Edit Question
+    </button>
+
+    <!-- The modal -->
+    <div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+    
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabelSmall">New Question</h4>
+                </div>
+    
+                <div class="modal-body">
+                    <div class="row" style="padding: 5%;">
+                        {{ wtf.quick_form(question_form) }}
+                    </div>
+                </div>
+    
+            </div>
         </div>
     </div>
+    <!-- End Modal -->
     <hr>
     <div class="row">
         {% if question_paper.questions %}

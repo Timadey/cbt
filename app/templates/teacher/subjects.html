@@ -1,0 +1,30 @@
+{% extends 'teacher/base.html' %}
+
+{% block app_content %}
+<div class="row">
+    <div>
+        <h2>All Subjects</h2>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">SN</th>
+                <th scope="col">Subject</th>
+                <th scope="col">Teacher</th>
+                <th scope="col">Examinations</th>
+                <th scope="col">Date Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for subject in subjects %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td><a href="#">{{ subject.name }}</button></td>
+                <td>{{ subject.teacher.name }}</td>
+                <td>{{ subject.examinations|length }} Examinations</td>
+                <td>{{ subject.created_at }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
+{% endblock %}

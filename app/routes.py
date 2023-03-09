@@ -4,16 +4,64 @@
 import json
 
 from flask import flash, redirect, url_for, render_template, request
+from flask_login import current_user, login_user, logout_user, login_required
 from app import app, db, Examination, Subject, Teacher, QuestionPaper
-from app.forms import ExaminationForm, SubjectForm, QuestionForm, QuestionPaperForm
+from app.forms import ExaminationForm, SubjectForm, QuestionForm, LoginForm, RegisterForm
+from app.models import Teacher
 
 #####################################################
 # ADMIN or Teachers routes
 #####################################################
 
+
 @app.route('/teacher')
 def dashboard():
-    return 'CBT'
+    return render_template('teacher/base.html')
+
+
+@app.route('/teacher/login', methods=['GET', 'POST'])
+def teacher_login():
+    """Login Teacher"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        teacher = Teacher.query.filter_by(email=login_form.email.data).first()
+        if teacher is None or not teacher.is_password(login_form.password.data):
+            flash('Invalid Login details', 'warning')
+            redirect(url_for('teacher_login'))
+        else:
+            login_user(teacher, remember=login_form.remember_me.data)
+            flash('Login successful', 'success')
+            return redirect(url_for('teacher_login'))
+    return render_template('teacher/login.html', title='Sign in', form=login_form)
+
+
+@app.route('/teacher/register', methods=['GET', 'POST'])
+def teacher_register():
+    """Register new teacher"""
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    register_form = RegisterForm()
+    if register_form.validate_on_submit():
+        teacher = Teacher(
+            name=register_form.name.data,
+            email=register_form.email.data
+        )
+        teacher.set_password(register_form.password.data)
+        db.session.add(teacher)
+        db.session.commit()
+        flash('Registration successful! Please login', 'success')
+        return redirect(url_for('teacher_login'))
+    return render_template('teacher/register.html',
+                           form=register_form, title='Register')
+
+
+@app.route('/teacher/logout', methods=['GET'])
+def teacher_logout():
+    """Logout teacher"""
+    logout_user()
+    return redirect(url_for('teacher_login'))
 
 
 @app.route('/teacher/examination', methods=['GET'])
@@ -42,14 +90,26 @@ def examination_new():
     if form.validate_on_submit():
         exam = Examination()
         exam.name = form.name.data
+        # start and end date need extra parsing
+        # bug: datetime not passed front client
+        # print value in str to see
         exam.start_date = form.start_date.data
         exam.end_date = form.end_date.data
         exam.subjects = [Subject.query.get(id) for id in form.subjects.data]
         db.session.add(exam)
         db.session.commit()
-        flash(f'New Examination created: {exam.name}')
+        flash(f'New Examination created: {exam.name}', 'info')
         return redirect(url_for('examination'))
     return render_template('teacher/new_examination.html', form=form)
+
+
+@app.route('/teacher/subject', methods=['GET'])
+def subject():
+    """Get all subjects
+    """
+    subjects = Subject.query.join(Teacher).order_by(
+        Subject.created_at.desc()).all()
+    return render_template('teacher/subjects.html', subjects=subjects)
 
 
 @app.route('/teacher/subject/new', methods=['GET', 'POST'])
@@ -65,12 +125,13 @@ def subject_new():
         subject.teacher_id = form.teacher.data
         db.session.add(subject)
         db.session.commit()
-        flash(f'New Subject added: {subject.name}')
+        flash(f'New Subject added: {subject.name}', 'success')
         return redirect(url_for('subject_new'))
     return render_template('teacher/new_subject.html', form=form)
 
 
 @app.route('/teacher/examination/question/<string:exam_id>', methods=['GET', 'POST'])
+@login_required
 def examination_question(exam_id: str):
     """Get a particular question
     """
@@ -101,6 +162,7 @@ def examination_question(exam_id: str):
         else:
             num = len(question_paper.questions_dict) + 1
         options = question_form.options.data.split('\n')
+        # future: Check correct option on question paperedit
         correct_option = options[int(question_form.correct_option.data) - 1]
         single_question = {
             num: {
@@ -116,6 +178,7 @@ def examination_question(exam_id: str):
         question_paper.questions = json.dumps(que)
         db.session.add(question_paper)
         db.session.commit()
+        flash(f'Question {num} added', 'success')
         return redirect(url_for('examination_question', exam_id=exam_id, subject=subject_id))
     return render_template('teacher/question_paper.html', question_paper=question_paper, question_form=question_form)
 
@@ -124,6 +187,6 @@ def examination_question(exam_id: str):
 # Students or Teachers routes
 #####################################################
 
-@app.route('/examination/write/<string:exam_id', methods=['GET'])
+@app.route('/examination/write/<string:exam_id>', methods=['GET'])
 def examination_write(exam_id: str):
     pass
