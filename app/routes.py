@@ -23,7 +23,7 @@ def dashboard():
 def teacher_login():
     """Login Teacher"""
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('examination'))
     login_form = LoginForm()
     if login_form.validate_on_submit():
         teacher = Teacher.query.filter_by(email=login_form.email.data).first()
