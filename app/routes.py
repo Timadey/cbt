@@ -6,7 +6,7 @@ import json
 from flask import flash, redirect, url_for, render_template, request
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app, db, Examination, Subject, Teacher, QuestionPaper
-from app.forms import ExaminationForm, SubjectForm, QuestionForm, LoginForm, RegisterForm
+from app.forms import PaperForm, WriteExamination, StartExaminationForm, ExaminationForm, SubjectForm, QuestionForm, LoginForm, RegisterForm
 from app.models import Teacher
 
 #####################################################
@@ -87,6 +87,7 @@ def examination_new():
     form = ExaminationForm()
     all_subjects = Subject.query.all()
     form.subjects.choices = [(sub.id, sub.name) for sub in all_subjects]
+    print ('start_date', form.start_date.data, 'end_date', form.end_date.data)
     if form.validate_on_submit():
         exam = Examination()
         exam.name = form.name.data
@@ -187,6 +188,30 @@ def examination_question(exam_id: str):
 # Students or Teachers routes
 #####################################################
 
-@app.route('/examination/write/<string:exam_id>', methods=['GET'])
-def examination_write(exam_id: str):
-    pass
+@app.route('/', methods=['GET', 'POST'])
+def start_examination():
+    form = StartExaminationForm()
+    if form.validate_on_submit():
+        exam_id = form.examination_id.data
+        subject_id = form.subject_id.data
+        # Get question paper for exam for the subject
+        paper = QuestionPaper.query.join(Examination).join(Subject).where(Examination.id==exam_id, Subject.id==subject_id).first()
+        print(paper)
+        return redirect (url_for('write_examination', paper_id=paper.id))
+    return render_template('student/start_examination.html', form=form)
+    
+
+@app.route('/<int:paper_id>', methods=['GET', 'POST'])
+def write_examination(paper_id):
+    paper = QuestionPaper.query.get_or_404(paper_id)
+    
+    write_form = WriteExaminationForm()
+    for pap in paper:
+        paper_form = PaperForm()
+        paper_form.question.data = pap.questions_dict['question']
+        choices = []
+        for idx, option in enumerate(pap.question_dict['options']):
+            choice = (idx,option)
+            choices.append(choice)
+        write_form.answers.append(paper)
+    return render_template('student/write_examination.html', form=write_form)
