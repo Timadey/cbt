@@ -3,7 +3,7 @@
 """
 import datetime
 from flask_wtf import FlaskForm
-from wtforms import SubmitField, StringField, DateTimeLocalField, DateTimeField,\
+from wtforms import FieldList, FormField, SubmitField, RadioField, StringField, DateTimeLocalField, DateTimeField,\
     SelectMultipleField, SelectField, TextAreaField, EmailField, PasswordField, BooleanField, ValidationError
 from wtforms.validators import InputRequired, DataRequired, Email, EqualTo
 from wtforms.widgets import DateTimeInput, Select, DateTimeLocalInput
@@ -16,9 +16,9 @@ class ExaminationForm(FlaskForm):
     """
     name = StringField('Examination Name', validators=[
         InputRequired('Name of examination is required')])
-    start_date = DateTimeField('Start Date', validators=[
+    start_date = DateTimeLocalField('Start Date', format='%Y-%m-%dT%H:%M', validators=[
         InputRequired('Start is required')])
-    end_date = DateTimeField('End Date', format='%Y-%m-%d %H:%M:%S', validators=[
+    end_date = DateTimeLocalField('End Date', format='%Y-%m-%d %H:%M:%S', validators=[
         InputRequired('End date is required')])
     subjects = SelectMultipleField('Add Subjects', validators=[
         InputRequired('At least a subject should be in an examination')])
@@ -73,3 +73,23 @@ class RegisterForm(FlaskForm):
         res = [row[0] for row in stmt]
         if len(res) > 0:
             raise ValidationError('Email is already in use')
+
+
+class StartExaminationForm(FlaskForm):
+    """Log student in to write an examination"""
+    examination_id = StringField('Examination id')
+    subject_id = StringField('Student Id')
+    start_exam = SubmitField('Start Exam')
+    
+def readOnlyWidget(field, **kwargs):
+    return kwargs.get('values', field._value())
+    
+
+class PaperForm(FlaskForm):
+    question_num = ('Question Number')
+    question = TextAreaField('Question', widget=readOnlyWidget)
+    answer = RadioField('Options')
+
+class WriteExamination(FlaskForm):
+    answers = FieldList(FormField(PaperForm))
+    submit = SubmitField('Submit')
