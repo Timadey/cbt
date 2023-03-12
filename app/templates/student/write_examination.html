@@ -4,7 +4,24 @@
 {% block app_content %}
 <h1> Write Examination</h1>
 <div class="row">
-    <div class="col-md-8">
-        {{ wtf.quick_form(form) }}
-    </div>
+    <form class="form" role="form" method="POST", action="{{url_for('write_examination', paper_id=paper_id)}}">
+        {% for num, que in paper.items() %}
+        <div class="panel">
+            <div class="panel-title">
+                <p>{{num}}.) {{que.get('question')}}</p>
+            </div>
+            <div class="panel-body" style="padding-left: 4%;">
+                <div class="form-group" id="{{num}}" name="options">
+
+                    {% for opt in que.get('options') %}
+                    <div>
+                        <input type="radio" value="{{loop.index0}}" name="{{num}}"><span style="padding-left: 1%;">{{opt}}</span> <br>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <input class="btn btn-danger" type="submit" name="submit" value="Submit">
+    </form>
 {% endblock app_content %}

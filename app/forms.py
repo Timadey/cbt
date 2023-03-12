@@ -80,16 +80,18 @@ class StartExaminationForm(FlaskForm):
     examination_id = StringField('Examination id')
     subject_id = StringField('Student Id')
     start_exam = SubmitField('Start Exam')
-    
+
+
 def readOnlyWidget(field, **kwargs):
     return kwargs.get('values', field._value())
-    
+
 
 class PaperForm(FlaskForm):
     question_num = ('Question Number')
     question = TextAreaField('Question', widget=readOnlyWidget)
     answer = RadioField('Options')
 
-class WriteExamination(FlaskForm):
+
+class WriteExaminationForm(FlaskForm):
     answers = FieldList(FormField(PaperForm))
     submit = SubmitField('Submit')

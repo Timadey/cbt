@@ -3,10 +3,11 @@
 """
 import json
 
-from flask import flash, redirect, url_for, render_template, request
+from flask import flash, redirect, url_for, render_template, request, session
 from flask_login import current_user, login_user, logout_user, login_required
 from app import app, db, Examination, Subject, Teacher, QuestionPaper
-from app.forms import PaperForm, WriteExamination, StartExaminationForm, ExaminationForm, SubjectForm, QuestionForm, LoginForm, RegisterForm
+from app.forms import PaperForm, WriteExaminationForm, StartExaminationForm,\
+    ExaminationForm, SubjectForm, QuestionForm, LoginForm, RegisterForm
 from app.models import Teacher
 
 #####################################################
@@ -87,7 +88,7 @@ def examination_new():
     form = ExaminationForm()
     all_subjects = Subject.query.all()
     form.subjects.choices = [(sub.id, sub.name) for sub in all_subjects]
-    print ('start_date', form.start_date.data, 'end_date', form.end_date.data)
+    print('start_date', form.start_date.data, 'end_date', form.end_date.data)
     if form.validate_on_submit():
         exam = Examination()
         exam.name = form.name.data
@@ -163,8 +164,8 @@ def examination_question(exam_id: str):
         else:
             num = len(question_paper.questions_dict) + 1
         options = question_form.options.data.split('\n')
-        # future: Check correct option on question paperedit
-        correct_option = options[int(question_form.correct_option.data) - 1]
+        # future: Check correct option on question paper edit
+        correct_option = int(question_form.correct_option.data) - 1
         single_question = {
             num: {
                 'question': question_form.question.data,
@@ -195,23 +196,26 @@ def start_examination():
         exam_id = form.examination_id.data
         subject_id = form.subject_id.data
         # Get question paper for exam for the subject
-        paper = QuestionPaper.query.join(Examination).join(Subject).where(Examination.id==exam_id, Subject.id==subject_id).first()
+        paper = QuestionPaper.query.join(Examination).join(Subject).where(
+            Examination.id == exam_id, Subject.id == subject_id).first()
         print(paper)
-        return redirect (url_for('write_examination', paper_id=paper.id))
+        return redirect(url_for('write_examination', paper_id=paper.id))
     return render_template('student/start_examination.html', form=form)
-    
+
 
 @app.route('/<int:paper_id>', methods=['GET', 'POST'])
 def write_examination(paper_id):
     paper = QuestionPaper.query.get_or_404(paper_id)
-    
-    write_form = WriteExaminationForm()
-    for pap in paper:
-        paper_form = PaperForm()
-        paper_form.question.data = pap.questions_dict['question']
-        choices = []
-        for idx, option in enumerate(pap.question_dict['options']):
-            choice = (idx,option)
-            choices.append(choice)
-        write_form.answers.append(paper)
-    return render_template('student/write_examination.html', form=write_form)
+    if request.method == 'POST':
+        submitted = {k: v for k, v in request.form.items()}
+        del submitted['submit']
+        # Mark submitted answers
+        paper = paper.questions_dict
+        score = 0
+        for que_num, answer in submitted.items():
+            if paper.get(que_num).get('correct_option') == int(answer):
+                score += 1
+        flash(f'You scored {score}/{len(paper)}')
+        return render_template('student/base.html')
+    return render_template('student/write_examination.html', paper=paper.questions_dict, paper_id=paper_id)
+
