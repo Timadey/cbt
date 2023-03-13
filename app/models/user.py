@@ -1,12 +1,11 @@
 # #!/usr/bin/python3
 
 """Provides basic functionalities of a user"""
-from app import login_manager
 from sqlalchemy import Column, String
-from app.models import CbtModel
-from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from app.models import CbtModel
+from app import login_manager
+from flask_login import UserMixin
 
 class User(CbtModel, UserMixin):
     """Provides basic functionalities of a user

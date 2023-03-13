@@ -10,7 +10,7 @@
                         <div class='col-md-1'>{{loop.index}}</div>
                         <div class='col-md-2'>{{ subject.name }}</div>
                         <div class='col-md-2'>
-                            <a href="{{ url_for('examination_question', exam_id=examination.id) }}?subject={{subject.id}}">
+                            <a href="{{ url_for('teacher.examination.question', exam_id=examination.id) }}?subject={{subject.id}}">
                                 <button class="btn btn-primary">
                                 Questions <span class="badge"> {{ subject.exam_question(examination.id)[0].questions_dict|length }}</span>
                                 </button>

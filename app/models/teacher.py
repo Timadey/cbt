@@ -3,9 +3,9 @@
 """
 from app.models.user import User
 from app.models.cbt_model import CbtModel
-from app import db
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
+from app import db
 
 
 class Teacher(User, db.Model):

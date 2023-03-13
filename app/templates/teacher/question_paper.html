@@ -47,7 +47,7 @@
             <div class="col-md-6">
                 <div class="panel">
                     <div class="panel-title">{{num}}.) {{question.get('question') }}
-                    <a href="{{ url_for('examination_question', exam_id=question_paper.examination_id,
+                    <a href="{{ url_for('teacher.examination.question', exam_id=question_paper.examination_id,
                     subject=question_paper.subject_id, edit_num=num) }}">
                     <button class="btn btn-primary">Edit</button>
                     </a>

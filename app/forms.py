@@ -47,13 +47,13 @@ class QuestionForm(FlaskForm):
     add_or_save = SubmitField('Add or Save Edit')
 
 
-class LoginForm(FlaskForm):
-    """Teacher login form"""
-    email = EmailField('Email', validators=[InputRequired(), DataRequired()])
-    password = PasswordField('Password', validators=[
-                             InputRequired(), DataRequired()])
-    remember_me = BooleanField('Remember me')
-    login = SubmitField('Login')
+# class LoginForm(FlaskForm):
+#     """Teacher login form"""
+#     email = EmailField('Email', validators=[InputRequired(), DataRequired()])
+#     password = PasswordField('Password', validators=[
+#                              InputRequired(), DataRequired()])
+#     remember_me = BooleanField('Remember me')
+#     login = SubmitField('Login')
 
 
 class RegisterForm(FlaskForm):

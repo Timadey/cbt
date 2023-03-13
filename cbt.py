@@ -2,7 +2,7 @@
 """Main Flask App
 """
 import flask
-from app import app
+from app import create_app
 
 if __name__ == "__main__":
-    flask.run(app)
+    flask.run(create_app())
