@@ -1,0 +1,29 @@
+{% extends 'teacher/base.html' %}
+
+{% block app_content %}
+<div class="row">
+    <div>
+        <h2>All Students</h2>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">SN</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Date Added</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td><a href="#">{{ student.name }}</button>
+                </td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.created_at }}</td>
+            </tr>
+            {% endfor %}
+    </table>
+</div>
+{% endblock %}

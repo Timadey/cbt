@@ -1,0 +1,239 @@
+{% extends 'teacher/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<div
+    class="w-full mb-4 block p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <div class="rounded-md pb-2 border-b-2">
+        <div class="flex justify-between">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                {{ question_paper.examination.name }}
+            </h5>
+            <span
+                class="flex max-h-10 bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-2.5 rounded dark:bg-green-900 dark:text-green-300">
+                <svg class="w-4 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25">
+                    </path>
+                </svg>
+                <p class="pl-2">{{ question_paper.subject.name }}</p>
+            </span>
+        </div>
+        <span class="text-gray-700 flex">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5">
+                </path>
+            </svg>
+            <p class="pl-2">
+                {{ question_paper.start_date }} to {{ question_paper.end_date }}
+            </p>
+        </span>
+        <span class="mt-2 text-gray-700 flex">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="pl-2">
+                Duration
+            </p>
+        </span>
+        <span class="mt-2 text-gray-700 flex">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z">
+                </path>
+            </svg>
+            <p class="pl-2">
+                {{ question_paper.total_questions }} Questions
+            </p>
+        </span>
+    </div>
+    <!-- Question Display -->
+    <div  class="mt-4">
+        <strong><p id="question-indicator">Question 1 of {{ question_paper.total_questions }}</p></strong>
+        <p id="question-display">
+            Nulla non mattis ipsum. Cras non purus purus. In dictum tempor rutrum. Nam sagittis risus leo, id sollicitudin ipsum
+            varius et. Nulla euismod, erat convallis egestas auctor, ex augue tincidunt ligula, ut fermentum justo sapien sit amet
+            nisi. Nullam euismod eros eu pharetra consequat. Duis vitae varius lacus. Proin dictum nec felis nec porttitor. Sed vel
+            ipsum sit amet tellus ultrices pretium. Phasellus ipsum nisl, varius ac hendrerit rhoncus, ullamcorper at lectus. In id
+            ultricies magna.
+        </p>
+    </div>
+    <!-- Options List -->
+    <div class="mt-4">
+        <h3 class="mt-4 font-semibold text-gray-900 dark:text-white">Options</h3>
+        <ul id="option-list"
+            class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <!-- Options here -->
+        </ul>
+    </div>
+    <!-- Question numbers pagination buttons -->
+
+    <div id="prev-next" class="flex justify-between w-full mt-4">
+    
+        <!-- Buttons -->
+        <button id="prev-question-btn"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                    clip-rule="evenodd"></path>
+            </svg>
+            Prev
+        </button>
+        <button id="next-question-btn"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+            Next
+            <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd"
+                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                    clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    </div>
+    <div id="question-pagination"class="mt-4" >
+        <nav aria-label="Page navigation example">
+            <ul class="inline-flex items-center -space-x-px">
+                <li>
+                    <a href="#"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+                </li>
+                <li>
+                    <a href="#" aria-current="page"
+                        class="z-10 px-3 py-2 leading-tight text-gray-700 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-gray-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Add Question or option -->
+    <div class="mt-4">
+        <label for="question-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add Question or option</label>
+        <textarea id="question-input" rows="4"
+            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Write a question or an option here..."
+            val="">
+        </textarea>
+
+
+        <div class="inline-flex rounded-md shadow-sm mt-4" role="group">
+            <button id="add-option-btn" type="button"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-2 focus:ring-gray-200 focus:text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true" class="w-4 h-4 mr-2 fill-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                </svg>
+                Add Option
+            </button>
+            <button id="add-question-btn" type="button"
+                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-gray-700 focus:z-10 focus:ring-2 focus:ring-gray-200 focus:text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
+                <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="none" stroke="currentColor"
+                stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                </svg>
+                Add/Edit Question
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="question_paper">
+    <h2>Examination: {{ question_paper.examination.name }} </h2>
+    <p><b>Subject: {{ question_paper.subject.name }} </b></p>
+    <p><b>Total Questions: {{ question_paper.total_questions }} </b></p>
+    <p>Start: {{ question_paper.start_date }} </p>
+    <p>End: {{ question_paper.end_date }} </p>
+    <hr>
+    {# <p> There are no questions here yet. Add some questions </p> #}
+
+    <!-- Start Model -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#smallShoes">
+        Add or Edit Question
+    </button>
+
+    <!-- The modal -->
+    <div class="modal fade" id="smallShoes" tabindex="-1" role="dialog" aria-labelledby="modalLabelSmall"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabelSmall">New Question</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row" style="padding: 5%;">
+                        {{ wtf.quick_form(question_form) }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- End Modal -->
+    <hr>
+    <div class="row">
+        {% if question_paper.questions %}
+        {% for num, question in question_paper.questions_dict.items()|sort %}
+        <div class="col-md-6">
+            <div class="panel">
+                <div class="panel-title">{{num}}.) {{question.get('question') }}
+                    <a href="{{ url_for('teacher.examination.question', id=question_paper.id, edit_num=num) }}">
+                        <button class="btn btn-primary">Edit</button>
+                    </a>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <p>Options</p>
+                        {% for option in question.get('options') %}
+                        {# <div class='col-md-2'> #}
+                            {{loop.index}}.) {{option}}<br>
+                            {# </div> #}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {# {% else %} #}
+
+        {# <div class="col-md-4">
+            {{ wtf.quick_form(question_paper_form) }}
+        </div> #}
+        {% endif %}
+    </div>
+</div>
+{% endblock app_content %}
+{% block javascript %}
+{{ super() }}
+<script src="{{url_for('static',filename='js/add_question.js')}}"></script>
+{% endblock javascript %}

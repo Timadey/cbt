@@ -11,7 +11,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
 login_manager = LoginManager()
-login_manager.login_view = 'teacher.login'
+login_manager.login_view = 'teacher.auth.login'
 
 # Blueprint imports
 from app.teacher import bp as teacher_bp
@@ -20,6 +20,7 @@ def create_app(config_class=Config):
     """Application factory function"""
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.url_map.strict_slashes = False
 
     # Init app dependencies
     db.init_app(app)

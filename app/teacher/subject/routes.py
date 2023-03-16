@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Routes for Subject"""
 from flask import render_template, flash, redirect, url_for
+from flask_login import login_required
 from app import db
 from app.models import Teacher
 from app.models import Subject
@@ -9,15 +10,17 @@ from app.teacher.subject.forms import SubjectForm
 
 
 @bp.route('/', methods=['GET'])
+@login_required
 def all():
     """Get all subjects
     """
     subjects = Subject.query.join(Teacher).order_by(
         Subject.created_at.desc()).all()
-    return render_template('teacher/subjects.html', subjects=subjects)
+    return render_template('teacher/subject/all.html', subjects=subjects)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     """Create a new Subject
     """
@@ -32,4 +35,4 @@ def create():
         db.session.commit()
         flash(f'New Subject added: {subject.name}', 'success')
         return redirect(url_for('teacher.subject.all'))
-    return render_template('teacher/new_subject.html', form=form)
+    return render_template('teacher/subject/new.html', form=form)

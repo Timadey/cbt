@@ -30,6 +30,8 @@ class QuestionPaper(CbtModel, db.Model):
                         default=datetime.utcnow(), nullable=True)
     end_date = Column('end_date', DateTime,
                       default=datetime.utcnow(), nullable=True)
+    students = relationship(
+        'Student', secondary='results', back_populates='question_papers')
 
     @property
     def questions_dict(self) -> List[dict]:
@@ -70,7 +72,6 @@ class Subject(CbtModel, db.Model):
     examinations = relationship(
         'Examination', secondary='question_papers', back_populates='subjects')
     questions = relationship('QuestionPaper', viewonly=True)
-
 
     def exam_question(self, exam_id: str = None):
         """Return a list of question paper for this subject or just one for an exam

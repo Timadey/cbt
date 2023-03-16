@@ -1,0 +1,31 @@
+{% extends 'teacher/base.html' %}
+
+{% block app_content %}
+<div class="row">
+    <h2>{{ examination.name }}</h2>
+    {% for paper in examination.questions %}
+    <div class="panel">
+        <div class="panel-body">
+            <div class="row">
+                <div class='col-md-1'>{{loop.index}}</div>
+                <div class='col-md-2'>{{ paper.subject.name }}</div>
+                <div class='col-md-2'>
+                    <a href="{{ url_for('teacher.examination.question', id=paper.id)}}">
+                        <button class="btn btn-primary">
+                            Questions <span class="badge"> {{ paper.questions_dict|length }}</span>
+                        </button>
+                    </a>
+                </div>
+                <div class='col-md-2'>
+                    <a href="#">
+                        <button class="btn btn-primary">
+                            Eligible Students <span class="badge"> {{ paper.students|length }}</span>
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock app_content %}

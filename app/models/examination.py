@@ -29,16 +29,15 @@ class Examination(CbtModel, db.Model):
     subjects = relationship(
         'Subject', secondary='question_papers', back_populates='examinations')
     questions = relationship('QuestionPaper', viewonly=True)
-    students = relationship(
-        'Student', secondary='results', back_populates='examinations')
-    results = relationship('Result', viewonly=True)
 
 
 class Result(CbtModel, db.Model):
     """Result of an examination. A weak entity between students and examination"""
     __tablename__ = 'results'
-    examination_id = Column(String(60), ForeignKey(
-        'examinations.id'), nullable=False)
+    id = Column(Integer(), primary_key=True, unique=True, autoincrement=True)
+    question_paper_id = Column(Integer, ForeignKey(
+        'question_papers.id'), nullable=False)
     student_id = Column(String(60), ForeignKey('students.id'), nullable=False)
+    token = Column(Integer, autoincrement=True, nullable=False)
     score = Column(Integer, nullable=True)
     time_submitted = Column(DateTime, nullable=True)

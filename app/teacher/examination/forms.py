@@ -32,3 +32,10 @@ class QuestionForm(FlaskForm):
         'Correct Options', description='''Example: 1 if first option is the correct option.
         2 if the second option is correct instead''')
     add_or_save = SubmitField('Add or Save Edit')
+
+
+class EligibleStudentForm(FlaskForm):
+    """A form to make student eligible to write a question paper"""
+    student = SelectMultipleField('Select Students', validators=[
+        InputRequired('At least a student should be selected')])
+    make_eligible = SubmitField('Make Eligible')

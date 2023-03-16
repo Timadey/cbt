@@ -1,3 +1,5 @@
 venv
 .env
 migrations
+node_modules
+package-lock.json

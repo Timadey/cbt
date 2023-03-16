@@ -14,6 +14,9 @@ def login():
     """Login Teacher"""
     if current_user.is_authenticated:
         return redirect(url_for('teacher.examination.all'))
+        # flash("Oh noooo", category='danger')
+        # return render_template('teacher/base.html')
+
     login_form = LoginForm()
     if login_form.validate_on_submit():
         teacher = Teacher.query.filter_by(email=login_form.email.data).first()

@@ -4,28 +4,33 @@ import json
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_required
 from app import db
-from app.models import Examination
-from app.models import Subject, QuestionPaper
+from app.models import Examination, Student
+from app.models import Subject, QuestionPaper, Result
 from app.teacher.examination import bp
-from app.teacher.examination.forms import ExaminationForm, QuestionForm
+from app.teacher.examination.forms import ExaminationForm, QuestionForm, EligibleStudentForm
+
 
 @bp.route('/', methods=['GET'])
+@login_required
 def all():
     """Get all examinations
     """
     exams = Examination.query.order_by(Examination.start_date.desc()).all()
-    return render_template('teacher/examinations.html', examinations=exams)
+    return render_template('teacher/examination/all.html', examinations=exams)
 
 
 @bp.route('/<string:id>', methods=['GET'])
+@login_required
 def one(id: str):
     """Get a specific examination
     """
-    exam = Examination.query.get_or_404(id)
-    return render_template('teacher/examination.html', examination=exam)
+    exam = Examination.query.join(QuestionPaper).where(
+        Examination.id == id).one()
+    return render_template('teacher/examination/one.html', examination=exam)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
+@login_required
 def create():
     """Create a new examination period
     """
@@ -46,21 +51,21 @@ def create():
         db.session.commit()
         flash(f'New Examination created: {exam.name}', 'info')
         return redirect(url_for('teacher.examination.all'))
-    return render_template('teacher/new_examination.html', form=form)
+    return render_template('teacher/examination/new.html', form=form)
 
 
-@bp.route('/question/<string:exam_id>', methods=['GET', 'POST'])
+@bp.route('/question/<int:id>', methods=['GET', 'POST'])
 @login_required
-def question(exam_id: str):
+def question(id: int):
     """Get a particular question
     """
     # Get arguments
     # edit_num is the question number to edit in a question paper, if exist
-    subject_id = request.args.get('subject')
+    # subject_id = request.args.get('subject')
     edit_num = request.args.get('edit_num', type=str)
     # Get the question paper
     question_paper = QuestionPaper.query.where(
-        QuestionPaper.examination_id == exam_id, QuestionPaper.subject_id == subject_id).one_or_404()
+        QuestionPaper.id == id).one_or_404()
 
     # If edit_num is present in args, get the question to edit from
     # the dictionary of questions and initialise the question form with the
@@ -69,7 +74,7 @@ def question(exam_id: str):
     if edit_num is not None:
         que_ = question_paper.questions_dict.get(edit_num)
         if que_ is None:
-            return redirect(url_for('teacher.examination.question', exam_id=exam_id, subject=subject_id))
+            return redirect(url_for('teacher.examination.question', id=id))
         que_['options'] = '\n'.join(que_['options'])
         question_form = QuestionForm(**que_)
     else:
@@ -98,5 +103,22 @@ def question(exam_id: str):
         db.session.add(question_paper)
         db.session.commit()
         flash(f'Question {num} added', 'success')
-        return redirect(url_for('teacher.examination.question', exam_id=exam_id, subject=subject_id))
-    return render_template('teacher/question_paper.html', question_paper=question_paper, question_form=question_form)
+        return redirect(url_for('teacher.examination.question', id=id))
+    return render_template('teacher/examination/question.html',
+                           question_paper=question_paper,
+                           question_form=question_form)
+
+
+# @bp.route('/question/<int:id>/eligible', methods=['GET', 'POST'])
+# @login_required
+# def eligible(id):
+#     """Get all or add new students that are eligible to write this question"""
+#     question_paper = QuestionPaper.query.join(
+#         Result).where(QuestionPaper.id == 113).all()
+#     students = Student.query.all()
+#     students = filter((lambda st_id: st_id != rst.student_id for rst in results), students)
+#     form = EligibleStudentForm()
+#     form.students.choices = [(stu.id, stu.name) for stu in students]
+#     if form.validate_on_submit():
+#         for student in form.
+

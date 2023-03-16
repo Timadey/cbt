@@ -11,7 +11,7 @@ from uuid import uuid4
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 
-
+from app import db
 class CbtModel():
     """
     A model that sets foundational attributes and methods for other models. All models
@@ -69,10 +69,11 @@ class CbtModel():
             model_dict.pop('_sa_instance_state', None)
         return model_dict
 
-    # def save(self):
-    #     """Save the current model to the database
-    #     """
-    #     storage.save(self)
+    def save(self):
+        """Save the current model to the database
+        """
+        db.session.add(self)
+        db.session.commit()
 
     # def all(self):
     #     """Get all of this model from database

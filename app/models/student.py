@@ -12,7 +12,5 @@ class Student(User, db.Model):
     __tablename__ = 'students'
     # name = Column(String(128), nullable=False)
     # email = Column(String(128), nullable=True, unique=True)
-    examinations = relationship(
-        'Examination', secondary='results', back_populates='students')
-    results = relationship('Result', viewonly=True)
-
+    question_papers = relationship(
+        'QuestionPaper', secondary='results', back_populates='students')
