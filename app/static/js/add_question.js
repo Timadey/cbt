@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  const questions = {};
+  let questions = {};
   let question = '';
   let options = [];
   let correct_option = '';
@@ -14,14 +14,11 @@ $(document).ready(function () {
     type: 'GET',
     url: `http://teacher.localhost:5000/examination/question/${id}/json`,
     dataType: 'text',
-    async: false,
+    async: true,
     success: function (response) {
       questions = JSON.parse(response);
-      console.log(response);
     }
   });
-  load_question(0);
-
   function get_input () {
     inp = $('#question-input').val();
     inp = inp.trim();
@@ -33,7 +30,7 @@ $(document).ready(function () {
   }
 
   function html_append_option (option_num, option) {
-    $('#option-list').append(`<li class='w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600'> \
+    $('#option-list').append(`<li name='option-list-item' class='w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600'> \
                 <div class='flex items-center pl-3'> \
                     <input id='${option_num}' type='radio' value='${option}' name='option' \
                         class='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 \
@@ -81,8 +78,10 @@ $(document).ready(function () {
     // list of `questions`. Initiate a new question
     //  else load the question using the index provided into view.
     l = Object.keys(questions).length;
-    if (l === 0)
+    console.log(l);
+    if (l === 0) {
       return $('#question-display').html('<i> ...No question yet. Add some by using the box below</i>');
+    }
     if (num < 0) {
       num = 0;
     }
@@ -103,12 +102,12 @@ $(document).ready(function () {
       edited = false;
     }
     //   Question Indicator
-    $('#question-indicator').text(`Question ${num + 1} of ${l}`);
+    $('#question-indicator').text(`Question ${num} of ${l}`);
 
     // Display question
     $('#question-display').text(question);
     // Display options
-    $("input[name='option'], label[name='option-label']").remove();
+    $("li[name='option-list-item']").remove();
     options.forEach((opt, idx) => {
       html_append_option(idx, opt);
     });
@@ -168,4 +167,10 @@ $(document).ready(function () {
     }
     que_num = load_question(que_num - 1);
   });
+
+  setTimeout(() => {
+    $('#spinner').show();
+    $('#next-question-btn').click();
+    $('#spinner').hide();
+  }, 500);
 });
