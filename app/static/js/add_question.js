@@ -7,6 +7,21 @@ $(document).ready(function () {
   let option_num = 0;
   let edited = false;
 
+  // Get questions from server
+  const url = window.location.pathname.split('/');
+  id = url[url.length - 1];
+  $.ajax({
+    type: 'GET',
+    url: `http://teacher.localhost:5000/examination/question/${id}/json`,
+    dataType: 'text',
+    async: false,
+    success: function (response) {
+      questions = JSON.parse(response);
+      console.log(response);
+    }
+  });
+  load_question(0);
+
   function get_input () {
     inp = $('#question-input').val();
     inp = inp.trim();
@@ -65,10 +80,12 @@ $(document).ready(function () {
     //   Load a question. If the index `num` passed is greater than
     // list of `questions`. Initiate a new question
     //  else load the question using the index provided into view.
+    l = Object.keys(questions).length;
+    if (l === 0)
+      return $('#question-display').html('<i> ...No question yet. Add some by using the box below</i>');
     if (num < 0) {
       num = 0;
     }
-    l = Object.keys(questions).length;
     if (num >= l) {
       num = l;
       question = '';
@@ -76,6 +93,7 @@ $(document).ready(function () {
       correct_option = '';
       option_num = 0;
     //   edited = true
+    //   console.log(num)
     } else {
       question = questions[num].question;
 
@@ -94,20 +112,11 @@ $(document).ready(function () {
     options.forEach((opt, idx) => {
       html_append_option(idx, opt);
     });
-    console.log(correct_option);
+    // console.log(correct_option)
     // Check correct option
-    $(`input[id='${correct_option}]`).attr('checked', 'true');
+    $(`input[id = ${correct_option}]`).prop('checked', true);
     return num;
   }
-
-  //   $.ajax({
-  //     type: 'GET',
-  //     url: 'http://teacher.localhost:5000',
-  //     dataType: 'text',
-  //     success: function (response) {
-  //       questions = JSON.parse(response)
-  //     }
-  //   })
 
   //   Add Question button clicked
   $('#add-question-btn').click(function () {
@@ -137,16 +146,26 @@ $(document).ready(function () {
   // Next Button
   $('#next-question-btn').click(function () {
     errors = save_question();
-    if (errors)
-      return alert(errors.errors);
+    if (errors) {
+      msg = '';
+      for (err of errors) {
+        msg += `${err}\n`;
+      }
+      return alert(msg);
+    }
     que_num = load_question(que_num + 1);
   });
 
   // Prev Button
   $('#prev-question-btn').click(function () {
     errors = save_question();
-    if (errors)
-      return alert(errors.errors);
+    if (errors) {
+      msg = '';
+      for (err of errors) {
+        msg += `${err}\n`;
+      }
+      return alert(msg);
+    }
     que_num = load_question(que_num - 1);
   });
 });

@@ -54,6 +54,14 @@ def create():
     return render_template('teacher/examination/new.html', form=form)
 
 
+@bp.route('/question/<int:id>/json', methods=['GET'])
+@login_required
+def question_json(id: int):
+    question_paper = QuestionPaper.query.where(
+        QuestionPaper.id == id).one_or_404()
+    return json.dumps(question_paper.questions_dict)
+
+
 @bp.route('/question/<int:id>', methods=['GET', 'POST'])
 @login_required
 def question(id: int):
@@ -121,4 +129,3 @@ def question(id: int):
 #     form.students.choices = [(stu.id, stu.name) for stu in students]
 #     if form.validate_on_submit():
 #         for student in form.
-
