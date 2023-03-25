@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Routes for Examination"""
 import json
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required
 from app import db
 from app.models import Examination, Student
@@ -54,12 +54,38 @@ def create():
     return render_template('teacher/examination/new.html', form=form)
 
 
-@bp.route('/question/<int:id>/json', methods=['GET'])
+@bp.route('/question/<int:id>/json', methods=['GET', 'POST'])
 @login_required
 def question_json(id: int):
+    """Return a json question or save a jsn question"""
     question_paper = QuestionPaper.query.where(
         QuestionPaper.id == id).one_or_404()
-    return json.dumps(question_paper.questions_dict)
+    d = question_paper.questions_dict
+    d['0'] = {
+        'question': "A test question",
+        'options': ['Option 1', 'Option 2', 'Option 3'],
+        'correct_option': '1'
+    }
+    # return jsonify(question_paper.questions_dict)
+    if request.method == 'GET':
+        return jsonify(d)
+    else:
+        que = request.json
+        print(que)
+        err = []
+        for key, val in que.items():
+            if val['question'] == '':
+                err.push(f'Question {key} is empty')
+            if len(val['options']) < 1:
+                err.push(f'Add options to question {key}')
+            if not val['correct_option']:
+                err.push(f'Select correct option for question{key}')
+        if len(err) != 0:
+            return jsonify(request.json)
+        question_paper.questions = json.dumps(request.json)
+        db.session.add(question_paper)
+        db.session.commit()
+        return jsonify(status='OK')
 
 
 @bp.route('/question/<int:id>', methods=['GET', 'POST'])
