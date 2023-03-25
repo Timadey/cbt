@@ -291,6 +291,7 @@ $(document).ready(function () {
   // When Option list is clicked (Option is presumably changed)
   selectors.option_list.on('click', function () {
     if (selectors.option_list.children().length > 0) {
+      QueLoader.set_correct_option();
       // console.log(QueLoader.set_correct_option());
     }
   })
