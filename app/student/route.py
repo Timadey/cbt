@@ -32,7 +32,7 @@ def write_examination():
     """
     token = session.get('examination_token')
     result = Result.query.join(QuestionPaper).where(
-        Result.token == token).first()
+        Result.token == token).first_or_404()
     question_paper = result.question
     return render_template('student/write_examination.html',
                            question_paper=question_paper)

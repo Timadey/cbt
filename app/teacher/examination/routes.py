@@ -2,7 +2,7 @@
 """Routes for Examination"""
 import json
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, session
 from flask_login import login_required
 from app import db
 from app.models import Examination, Student
@@ -146,6 +146,7 @@ def question_paper(id):
         result.time_submitted = datetime.now()
         db.session.add(result)
         db.session.commit()
+        del session['examination_token']
         return jsonify({
             'score': score,
             'callback': url_for('student.start_examination')

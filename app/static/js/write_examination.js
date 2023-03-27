@@ -53,7 +53,7 @@ $(function () {
     console.log(QueLoader.questions);
     QueLoader.submit_questions(url, (res) => {
       alert(`Your score is ${res.score}/${Object.keys(QueLoader.questions).length}`);
-      window.location.replace(window.location.origin);
+      window.location.replace(res.callback);
     });
   });
 
