@@ -6,6 +6,11 @@ from app import db
 from .cbt_model import CbtModel
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
+from datetime import datetime
+
+
+def microsecond():
+    return int(datetime.now().microsecond)
 
 
 class Examination(CbtModel, db.Model):
@@ -38,6 +43,9 @@ class Result(CbtModel, db.Model):
     question_paper_id = Column(Integer, ForeignKey(
         'question_papers.id'), nullable=False)
     student_id = Column(String(60), ForeignKey('students.id'), nullable=False)
-    token = Column(Integer, autoincrement=True, nullable=False)
+    token = Column(Integer, autoincrement=True,
+                   nullable=False, default=microsecond())
     score = Column(Integer, nullable=True)
     time_submitted = Column(DateTime, nullable=True)
+    student = relationship('Student', viewonly=True, back_populates='results')
+    question = relationship('QuestionPaper', viewonly=True, back_populates='results')

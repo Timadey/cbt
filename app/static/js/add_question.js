@@ -1,4 +1,4 @@
-async function set_question(url, cls) {
+export async function set_question(url, cls) {
    $.ajax({
       type: 'GET',
       url: url,
@@ -10,7 +10,7 @@ async function set_question(url, cls) {
     });
 }
 
-class QuestionLoader {
+export class QuestionLoader {
 
   questions;
   curr_question = "";
@@ -26,28 +26,27 @@ class QuestionLoader {
   }
 
   // Submit questions
-  submit_questions(url) {
+  submit_questions(url, success_fn) {
     const que = JSON.stringify(this.questions);
     // console.log(que);
     $.ajax({
       type: "POST",
       url: url,
       data: que,
+      headers: 'Access-Control-Allow-Origin=True',
       contentType: 'application/json',
-      success: function () {
-        alert('Question uploaded successfully!');
-      }
+      success: success_fn
     });
   }
 
   // load questions
   load_question(num = 0) {
     const que_length = Object.keys(this.questions).length;
-    if (que_length === 0) {
-      this.selectors.question_display.html('<i> ...No question yet. \
-      Add some by using the box below</i>');
-      return 0;
-    }
+    // if (que_length === 0) {
+    //   this.selectors.question_display.html('<i> ...No question yet. \
+    //   Add some by using the box below</i>');
+    //   return 0;
+    // }
     if (num === que_length) {
       // num = que_length;
       this.curr_question = "";
@@ -58,11 +57,16 @@ class QuestionLoader {
 
     } else {
       const que = this.questions[num];
-      this.curr_question = que.question;
-      this.curr_options = que.options;
-      this.curr_correct_option = que.correct_option;
-      this.curr_option_num = this.curr_options.length;
-      this.edited = false;
+      if (que) {
+        this.curr_question = que.question;
+        this.curr_options = que.options;
+        this.curr_correct_option = que.correct_option;
+        this.curr_option_num = this.curr_options.length;
+        this.edited = false;
+      }
+      else {
+        return 0;
+      }
     }
     // Start displaying current question and options
     this.selectors.question_indicator.text(`Question ${Number(num) + 1} of ${que_length}`);
@@ -79,6 +83,9 @@ class QuestionLoader {
     // Check correct option radio
     if (this.curr_correct_option) {
       $(`input[id=${this.curr_correct_option}]`).prop('checked', true);
+      // let class_attr = $(`li[name='question-number-btn'][id='${num}']`).attr('class');
+      // class_attr = class_attr.replace('text-gray-500 bg-white', 'text-white bg-green-700')
+      // $(`li[name='question-number-btn'][id='${num}']`).attr('class', class_attr);
     }
     // Style pagiation button
     $("li[name='question-number-btn']").removeAttr('style');
@@ -199,7 +206,7 @@ $(document).ready(function () {
   // Set URL to get question from server
   const url_ = window.location.pathname.split('/');
   const id = url_[url_.length - 1];
-  const url = `http://teacher.localhost:5000/examination/question/${id}/json`;
+  const url = `http://localhost:5000/teacher/examination/question/${id}/json`;
 
   // Initiate Question Loader
   const QueLoader = new QuestionLoader(url, selectors)
@@ -241,7 +248,7 @@ $(document).ready(function () {
     const errors = QueLoader.save_question();
     if (errors) {
       let msg = '';
-      for (err of errors) {
+      for (let err of errors) {
         msg += `${err}\n`;
       }
       return alert(msg);
@@ -260,7 +267,7 @@ $(document).ready(function () {
     const errors = QueLoader.save_question();
     if (errors) {
       let msg = '';
-      for (err of errors) {
+      for (let err of errors) {
         msg += `${err}\n`;
       }
       return alert(msg);
@@ -285,7 +292,7 @@ $(document).ready(function () {
       }
       return alert(msg);
     }
-    QueLoader.submit_questions(url);
+    QueLoader.submit_questions(url, ()=> alert("Question uploaded successfully!"));
   })
 
   // When Option list is clicked (Option is presumably changed)
@@ -301,7 +308,7 @@ $(document).ready(function () {
     const errors = QueLoader.save_question();
     if (errors) {
       let msg = '';
-      for (err of errors) {
+      for (let err of errors) {
         msg += `${err}\n`;
       }
       return alert(msg);

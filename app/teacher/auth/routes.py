@@ -27,7 +27,7 @@ def login():
             login_user(teacher, remember=login_form.remember_me.data)
             flash('Login successful', 'success')
             return redirect(url_for('teacher.auth.login'))
-    return render_template('teacher/login.html', title='Sign in', form=login_form)
+    return render_template('teacher/auth/login.html', title='Sign in', form=login_form)
 
 
 @bp.route('/register', methods=['GET', 'POST'])

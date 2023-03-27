@@ -8,5 +8,4 @@ from flask_login import login_required
 @bp.route('/', methods=['GET'])
 @login_required
 def dashboard():
-    return { 'man': 1}
-    # return render_template('teacher/base.html')
+    return render_template('teacher/base.html')

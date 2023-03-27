@@ -4,18 +4,21 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
-from config import Config
+from flask_session import Session
 
 # Dependencies Initialization
 db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
+sess = Session()
 login_manager = LoginManager()
 login_manager.login_view = 'teacher.auth.login'
 
 # Blueprint imports
-from app.teacher import bp as teacher_bp
 
+from app.teacher import bp as teacher_bp
+from app.student import bp as student_bp
+from config import Config
 def create_app(config_class=Config):
     """Application factory function"""
     app = Flask(__name__)
@@ -25,13 +28,16 @@ def create_app(config_class=Config):
     # Init app dependencies
     db.init_app(app)
     migrate.init_app(app, db)
-    bootstrap.init_app(app)
     login_manager.init_app(app)
+    sess.init_app(app)
+    bootstrap.init_app(app)
+
 
     # Register Blueprints
     app.register_blueprint(teacher_bp)
-    return app
+    app.register_blueprint(student_bp)
 
+    return app
 
 from .models import CbtModel, Examination, Teacher,\
     Subject, QuestionPaper, Student, Result, User

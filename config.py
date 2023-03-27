@@ -4,6 +4,7 @@
 from os import getenv
 from dotenv import load_dotenv
 from datetime import timedelta
+from app import db
 load_dotenv()
 
 
@@ -23,4 +24,7 @@ class Config():
 
     # App specifi
     SECRET_KEY = getenv('SECRET_KEY')
+    SESSION_PERMANENT = False
+    SESSION_TYPE = 'filesystem'
+    SESSION_SQLACHEMY = db
     # REMEMBER_COOKIE_DURATION = timedelta

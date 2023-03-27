@@ -32,6 +32,7 @@ class QuestionPaper(CbtModel, db.Model):
                       default=datetime.utcnow(), nullable=True)
     students = relationship(
         'Student', secondary='results', back_populates='question_papers')
+    results = relationship('Result', backref='question_paper')
 
     @property
     def questions_dict(self) -> List[dict]:

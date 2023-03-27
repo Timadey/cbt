@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Routes for Examination"""
 import json
+from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_required
 from app import db
@@ -54,6 +55,45 @@ def create():
     return render_template('teacher/examination/new.html', form=form)
 
 
+@bp.route('/question/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
+@login_required
+def question(id: int):
+    """Get a particular question
+    """
+    question_paper = QuestionPaper.query.where(
+        QuestionPaper.id == id).one_or_404()
+    eligible_stu = question_paper.students
+    all_students = Student.query.all()
+    # filter out students that are not eligible for this examination
+    ineligible_stu = list(
+        filter(lambda stu: stu not in eligible_stu, all_students))
+    return render_template('teacher/examination/question.html',
+                           question_paper=question_paper, students=ineligible_stu)
+
+
+
+##############
+# JSON ROUTES
+##############
+
+@bp.route('/make_eligible', methods=['POST'])
+@login_required
+def make_eligible():
+    """Make a student eligible to write a question paper"""
+    data = request.json
+    data['question_paper_id'] = int(data.get('question_paper_id'))
+    question_paper = QuestionPaper.query.where(
+        QuestionPaper.id == data.get('question_paper_id')).one_or_404()
+    student = Student.query.where(
+        Student.id == data.get('student_id')).one_or_404()
+    if not student in question_paper.students:
+        question_paper.students.append(student)
+        db.session.add(question_paper)
+        db.session.commit()
+        return jsonify({'message': 'Student made eligible successfully'})
+    else:
+        return jsonify({'message': 'Student is already eligible'})
+
 @bp.route('/question/<int:id>/json', methods=['GET', 'POST'])
 @login_required
 def question_json(id: int):
@@ -61,14 +101,11 @@ def question_json(id: int):
     question_paper = QuestionPaper.query.where(
         QuestionPaper.id == id).one_or_404()
     d = question_paper.questions_dict
-    d['0'] = {
-        'question': "A test question",
-        'options': ['Option 1', 'Option 2', 'Option 3'],
-        'correct_option': '1'
-    }
+
     # return jsonify(question_paper.questions_dict)
     if request.method == 'GET':
-        return jsonify(d)
+        response = jsonify(d)
+        return response
     else:
         que = request.json
         print(que)
@@ -88,59 +125,32 @@ def question_json(id: int):
         return jsonify(status='OK')
 
 
-@bp.route('/question/<int:id>', methods=['GET', 'POST'])
+@bp.route('/question_paper/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
 @login_required
-def question(id: int):
-    """Get a particular question
-    """
-    # Get arguments
-    # edit_num is the question number to edit in a question paper, if exist
-    # subject_id = request.args.get('subject')
-    edit_num = request.args.get('edit_num', type=str)
-    # Get the question paper
-    question_paper = QuestionPaper.query.where(
+def question_paper(id):
+    """Return question apaper without the correct options"""
+    result = Result.query.join(QuestionPaper).where(
         QuestionPaper.id == id).one_or_404()
-
-    # If edit_num is present in args, get the question to edit from
-    # the dictionary of questions and initialise the question form with the
-    # question. If the question does not exist in the dictionary of questions in a
-    # question paper, return redirect to this endpoint without the edit_num arg
-    if edit_num is not None:
-        que_ = question_paper.questions_dict.get(edit_num)
-        if que_ is None:
-            return redirect(url_for('teacher.examination.question', id=id))
-        que_['options'] = '\n'.join(que_['options'])
-        question_form = QuestionForm(**que_)
+    question_paper = result.question.questions_dict
+    if request.method == 'GET':
+        for val in question_paper.values():
+            val['correct_option'] = ""
+        return jsonify(question_paper)
     else:
-        question_form = QuestionForm()
-    # future: implement dynamic choices for correct option
-    if question_form.validate_on_submit():
-        if edit_num is not None:
-            num = edit_num
-        else:
-            num = len(question_paper.questions_dict) + 1
-        options = question_form.options.data.split('\n')
-        # future: Check correct option on question paper edit
-        correct_option = int(question_form.correct_option.data) - 1
-        single_question = {
-            num: {
-                'question': question_form.question.data,
-                # future: ensure to check for multiple line breaks in options
-                # to ensure proper split
-                'options': options,
-                'correct_option': correct_option
-            }
-        }
-        que = json.loads(question_paper.questions)
-        que.update(single_question)
-        question_paper.questions = json.dumps(que)
-        db.session.add(question_paper)
+        answer = request.json
+        score = 0
+        for num, que in answer.items():
+            if question_paper[num].get('correct_option') == que.get('correct_option'):
+                score += 1
+        result.score = score
+        result.time_submitted = datetime.now()
+        db.session.add(result)
         db.session.commit()
-        flash(f'Question {num} added', 'success')
-        return redirect(url_for('teacher.examination.question', id=id))
-    return render_template('teacher/examination/question.html',
-                           question_paper=question_paper,
-                           question_form=question_form)
+        return jsonify({
+            'score': score,
+            'callback': url_for('student.start_examination')
+        })
+
 
 
 # @bp.route('/question/<int:id>/eligible', methods=['GET', 'POST'])

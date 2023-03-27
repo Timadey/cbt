@@ -14,3 +14,4 @@ class Student(User, db.Model):
     # email = Column(String(128), nullable=True, unique=True)
     question_papers = relationship(
         'QuestionPaper', secondary='results', back_populates='students')
+    results = relationship('Result', viewonly=True)

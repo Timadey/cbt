@@ -10,8 +10,9 @@ classes:
 from uuid import uuid4
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime
-
 from app import db
+
+
 class CbtModel():
     """
     A model that sets foundational attributes and methods for other models. All models

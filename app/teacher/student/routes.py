@@ -17,7 +17,6 @@ def all():
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-
 def create():
     """Create a new student"""
     form = StudentForm()

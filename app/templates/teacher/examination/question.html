@@ -5,157 +5,305 @@
 
 <div
     class="w-full mb-4 block p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <div class="rounded-md pb-2 border-b-2">
-        <div class="flex justify-between">
+    <!-- Tab -->
+    <div class="mb-4 bg-white rounded-md border-b border-gray-200 dark:border-gray-700">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#tabContents"
+            role="tablist">
+            <li class="mr-2" role="presentation">
+                <button class="inline-block p-4 border-b-2 rounded-t-lg" id="question-tab" data-tabs-target="#question-tab-content"
+                    type="button" role="tab" aria-controls="question-tab-content" aria-selected="true">Questions</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button
+                    class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="result-tab" data-tabs-target="#result" type="button" role="tab" aria-controls="result"
+                    aria-selected="false">Results</button>
+            </li>
+            <li class="mr-2" role="presentation">
+                <button
+                    class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    id="eligibility-tab" data-tabs-target="#eligibility" type="button" role="tab" aria-controls="eligibility"
+                    aria-selected="false">Add Eligibility</button>
+            </li>
+        </ul>
+    </div>
+    <div id="tabContents">
+        <!-- Examination title -->
+        <div id={{question_paper.examination.id}} name="examination-title" class="flex justify-between mb-4">
             <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                 {{ question_paper.examination.name }}
             </h5>
-            <span
-                class="flex max-h-10 bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-2.5 rounded dark:bg-green-900 dark:text-green-300">
-                <svg class="w-4 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25">
-                    </path>
-                </svg>
-                <p class="pl-2">{{ question_paper.subject.name }}</p>
-            </span>
+                <span
+                    class="flex max-h-10 bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-2.5 rounded dark:bg-green-900 dark:text-green-300">
+                    <svg class="w-4 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25">
+                        </path>
+                    </svg>
+                    <p class="pl-2">{{ question_paper.subject.name }}</p>
+                </span>
+            </div>
         </div>
-        <span class="text-gray-700 flex">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5">
-                </path>
-            </svg>
-            <p class="pl-2">
-                {{ question_paper.start_date }} to {{ question_paper.end_date }}
-            </p>
-        </span>
-        <span class="mt-2 text-gray-700 flex">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-            <p class="pl-2">
-                Duration
-            </p>
-        </span>
-        <span class="mt-2 text-gray-700 flex">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z">
-                </path>
-            </svg>
-            <p class="pl-2">
-                {{ question_paper.total_questions }} Questions
-            </p>
-        </span>
-    </div>
-    <!-- Question Display -->
-    <div class="relative items-center">
-        <div  class="mt-4">
-            <strong><p id="question-indicator">Question Loading ... </p></strong>
-            <p id="question-display">
-            <!-- Question Here -->
-            </p>
-        </div>
-        <!-- Options List -->
-        <div class="mt-4">
-            <h3 class="mt-4 font-semibold text-gray-900 dark:text-white">Options</h3>
-            <ul id="option-list"
-                class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-            <!-- Options here -->
-            </ul>
+        <!-- Question Tab -->
+        <div id="question-tab-content" role="tabpanel" aria-labelledby="question-tab">
+            <div id={{question_paper.id}} name='question-paper' class="text-sm text-gray-500 dark:text-gray-400">
+                <span class="text-gray-700 flex">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5">
+                        </path>
+                    </svg>
+                    <p class="pl-2">
+                        {{ question_paper.start_date }} to {{ question_paper.end_date }}
+                    </p>
+                </span>
+                <span class="mt-2 text-gray-700 flex">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="pl-2">
+                        Duration
+                    </p>
+                </span>
+                <span class="mt-2 text-gray-700 flex">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z">
+                        </path>
+                    </svg>
+                    <p class="pl-2">
+                        {{ question_paper.total_questions }} Questions
+                    </p>
+                </span>
+            </div>
+            <!-- Question Display -->
+            <div class="relative items-center">
+                <div  class="mt-4">
+                    <strong><p id="question-indicator">Question Loading ... </p></strong>
+                    <p id="question-display">
+                    <!-- Question Here -->
+                    </p>
+                </div>
+                <!-- Options List -->
+                <div class="mt-4">
+                    <h3 class="mt-4 font-semibold text-gray-900 dark:text-white">Options</h3>
+                    <ul id="option-list"
+                        class="w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <!-- Options here -->
+                    </ul>
+                </div>
+
+                <!-- Spinner -->
+                <div id="spinner" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
+                    <svg aria-hidden="true"
+                        class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+                        viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                            fill="currentColor" />
+                        <path
+                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                            fill="currentFill" />
+                    </svg>
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <!-- Question numbers pagination buttons -->
+
+            <div id="prev-next" class="flex justify-between w-full mt-4">
+                <!-- Buttons -->
+                <button id="prev-question-btn"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    Prev
+                </button>
+                <button id="submit-question-btn"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true" class="w-4 h-4 mr-2 fill-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                    </svg>
+                    Submit
+                </button>
+                <button id="next-question-btn"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    Next
+                    <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="question-pagination"class="mt-4" >
+                <nav aria-label="Page navigation example">
+                    <ul class="inline-flex items-center -space-x-px">
+                        {% for key in question_paper.questions_dict %}
+                        <li id="{{key}}" name="question-number-btn"
+                                class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{loop.index}}
+                        </li>
+                        {% endfor %}
+                </nav>
+            </div>
+
+            <!-- Add Question or option -->
+            <div class="mt-4">
+                <label for="question-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add Question or option</label>
+                <textarea id="question-input" rows="4"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    placeholder="Write a question or an option here..."
+                    val="">
+                </textarea>
+
+
+                <div class="flex justify-between rounded-md shadow-sm mt-4" role="group">
+                    <button id="add-question-btn" type="button"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="none" stroke="currentColor"
+                        stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+                        </svg>
+                        Add/Edit Question
+                    </button>
+                    <button id="add-option-btn" type="button"
+                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true" class="w-4 h-4 mr-2 fill-current">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+                        </svg>
+                        Add Option
+                    </button>
+
+                </div>
+            </div>
         </div>
 
-        <!-- Spinner -->
-        <div id="spinner" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
-            <svg aria-hidden="true"
-                class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
-                viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                    fill="currentColor" />
-                <path
-                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                    fill="currentFill" />
-            </svg>
-            <span class="sr-only">Loading...</span>
-        </div>
-    </div>
-    <!-- Question numbers pagination buttons -->
+        <!-- Result tab -->
+        <div id="result" role="tabpanel"
+            aria-labelledby="result-tab">
+            
+            {% for result in question_paper.results %}
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Token
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Student Name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Score
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Time Submitted
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{result.token}}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{result.student.name}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{result.score}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{result.time_submitted}}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <p class="text-sm text-gray-500 dark:text-gray-400">No student has been added to this exam. Make a student eligible
+                    by pressing the
+                    <strong class="font-medium text-gray-800 dark:text-white">Add Eligibility</strong> button
+                </p>
+            </div>
+            {% endfor %}
 
-    <div id="prev-next" class="flex justify-between w-full mt-4">
-        <!-- Buttons -->
-        <button id="prev-question-btn"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <svg aria-hidden="true" class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
-                    d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z"
-                    clip-rule="evenodd"></path>
-            </svg>
-            Prev
-        </button>
-        <button id="submit-question-btn"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true" class="w-4 h-4 mr-2 fill-current">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-            </svg>
-            Submit
-        </button>
-        <button id="next-question-btn"
-            class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 border-0 border-l border-gray-700 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-            Next
-            <svg aria-hidden="true" class="w-5 h-5 ml-2" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd"
-                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"></path>
-            </svg>
-        </button>
-    </div>
-    <div id="question-pagination"class="mt-4" >
-        <nav aria-label="Page navigation example">
-            <ul class="inline-flex items-center -space-x-px">
-                {% for key in question_paper.questions_dict %}
-                <li id="{{key}}" name="question-number-btn"
-                        class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{loop.index}}
-                </li>
+        </div>
+        <div id="eligibility" role="tabpanel"
+            aria-labelledby="eligibility-tab">
+            <div>
+                <button id="add-new-student-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+                            focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
+                             dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
+                    <svg class="w-10 h-6 mr-2 -ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 
+                                    0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
+                        </path>
+                    </svg>
+                    Add New Student
+                </button>
+            </div>
+
+
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                {% for student in students %}
+                <table id="ineligible-students" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                Student Name
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Date Added
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="{{student.id}}" name='student'
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {{student.name}}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{student.created_at}}
+                            </td>
+                            <td class="px-6 py-4">
+                                <button type="button" id="make-eligible"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Make Eligible</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                    <p class="text-sm text-gray-500 dark:text-gray-400">All students are now eligible.
+                        You can add a new student first and make them eligible afterwards.
+                    </p>
+                </div>
                 {% endfor %}
-        </nav>
-    </div>
-
-    <!-- Add Question or option -->
-    <div class="mt-4">
-        <label for="question-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Add Question or option</label>
-        <textarea id="question-input" rows="4"
-            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Write a question or an option here..."
-            val="">
-        </textarea>
-
-
-        <div class="flex justify-between rounded-md shadow-sm mt-4" role="group">
-            <button id="add-question-btn" type="button"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-500 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                <svg aria-hidden="true" class="w-4 h-4 mr-2 fill-current" fill="none" stroke="currentColor"
-                stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
-                </svg>
-                Add/Edit Question
-            </button>
-            <button id="add-option-btn" type="button"
-                class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-lg hover:bg-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true" class="w-4 h-4 mr-2 fill-current">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
-                </svg>
-                Add Option
-            </button>
+            </div>
 
         </div>
     </div>
@@ -163,5 +311,6 @@
 {% endblock app_content %}
 {% block javascript %}
 {{ super() }}
-<script src="{{url_for('static',filename='js/add_question.js')}}"></script>
+<script type="module" src="{{url_for('static',filename='js/add_question.js')}}"></script>
+<script src="{{url_for('static',filename='js/make_eligible.js')}}"></script>
 {% endblock javascript %}

@@ -1,63 +1,62 @@
-{% extends "bootstrap/base.html" %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100">
 
-{% block title %}
- {% if title %}
-    {{ title }} - CBT
-    {% else %}
-    CBT
-    {% endif %}
-{% endblock title %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %} {{title}} {% else %} CBT {% endif %}</title>
+    {% block css %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/dist/output.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='node_modules/flowbite/dist/flowbite.css')}}">
+    {% endblock css %}
 
-{% block navbar %}
-<div class="row" >
+</head>
 
-<nav class="navbar navbar-default">
-    <div class="container-fluid" style="padding-right: 5%;">
-
-        <!-- BRAND -->
-        <div class="navbar-header" style="padding-left: 3%;padding-right: 3%;">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                data-target="#alignment-example" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{url_for('dashboard')}}">CBT</a>
-        </div>
-
-        <!-- COLLAPSIBLE NAVBAR -->
-        <div class="collapse navbar-collapse" id="alignment-example">
-
-            <!-- Links -->
-            {% if not current_user.is_anonymous %}
-            
-            {% endif %}
-
-
-        </div>
-
-    </div>
-</nav>
-</div>
-{% endblock navbar %}
-
-{% block content %}
-<div class="container">
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-        <div class="alert alert-info block-message" role="alert">
-
-            <li>{{ message }}</li>
-        </div>
-
+<body>
+    <!-- Main -->
+    <main>
+            <!-- Body -->
+        <div class="flex items-center justify-center h-auto mb-4 px-2 rounded sm:ml-64dark: mt-14 dark:bg-gray-800">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% import 'components/toast.html' as t %}
+            {{ t.toast(category=category, message=message)}}
             {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith %}
-        {% block app_content %}{% endblock %}
-</div>
+            {% endif %}
+            {% endwith %}
 
-{% endblock content %}
+
+            {% block app_content %}
+
+            <!-- 
+                <div class="flex items-center justify-center h-auto mb-4 rounded bg-gray-50 dark:bg-gray-800">
+            </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                        <p class="text-2xl text-gray-400 dark:text-gray-500">+</p>
+                    </div>
+                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                        <p class="text-2xl text-gray-400 dark:text-gray-500">+</p>
+                    </div>
+                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                        <p class="text-2xl text-gray-400 dark:text-gray-500">+</p>
+                    </div>
+                    <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+                        <p class="text-2xl text-gray-400 dark:text-gray-500">+</p>
+                    </div>
+                </div> -->
+            {% endblock app_content %}
+        </div>
+    </main>
+
+    {% block javascript %}
+    <script src="{{url_for('static',filename='node_modules/flowbite/dist/flowbite.js')}}"></script>
+    <script src="{{url_for('static',filename='node_modules/jquery/dist/jquery.min.js')}}"></script>
+    {% endblock javascript %}
+
+</body>
+
+</html>
