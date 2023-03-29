@@ -3,20 +3,17 @@
 from app.teacher.auth import bp
 from app.models import Teacher
 from app.teacher.auth.forms import LoginForm, RegisterForm
-from flask import redirect, render_template, url_for, flash
+from flask import redirect, render_template, url_for, flash, Response
 from flask_login import current_user, login_user, logout_user
 from app import db
-
-
+from typing import Union
+Response_ = Union[str, Response]
 
 @bp.route('/login', methods=['GET', 'POST'])
-def login():
-    """Login Teacher"""
+def login()-> Response_:
+    """Authenticate a teacher"""
     if current_user.is_authenticated:
         return redirect(url_for('teacher.examination.all'))
-        # flash("Oh noooo", category='danger')
-        # return render_template('teacher/base.html')
-
     login_form = LoginForm()
     if login_form.validate_on_submit():
         teacher = Teacher.query.filter_by(email=login_form.email.data).first()
@@ -31,7 +28,7 @@ def login():
 
 
 @bp.route('/register', methods=['GET', 'POST'])
-def register():
+def register() -> Response_:
     """Register new teacher"""
     if current_user.is_authenticated:
         return redirect(url_for('teacher.dashboard'))
@@ -51,7 +48,7 @@ def register():
 
 
 @bp.route('/logout', methods=['GET'])
-def logout():
+def logout() -> Response_:
     """Logout teacher"""
     logout_user()
     return redirect(url_for('teacher.auth.login'))

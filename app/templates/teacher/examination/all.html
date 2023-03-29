@@ -1,31 +1,78 @@
 {% extends 'teacher/base.html' %}
 
 {% block app_content %}
-<div class="row">
-    <div>
-        <h2>All Examinations</h2>
+    <div class="flex justify-between">
+    <h5 class=" mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">
+        All Examinations
+    </h5>
+        <div class="relative overflow-x-auto sm:rounded-lg">
+            <button id="add-new-student-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+                        focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
+                            dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
+                <svg class="w-10 h-6 mr-2 -ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 
+                                0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
+                    </path>
+                </svg>
+                Add New Student
+            </button>
+        </div>
     </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">SN</th>
-                <th scope="col">Examination</th>
-                <th scope="col">Start Date</th>
-                <th scope="col">End Date</th>
-                <th scope="col">Date Added</th>
-            </tr>
-        </thead>
-        <tbody>
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        S/N
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Examination
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Start Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        End Date
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Date Added
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
             {% for examination in examinations %}
-            <tr>
-                <th scope="row">{{ loop.index }}</th>
-                <td><a href="{{url_for('teacher.examination.one', id=examination.id )}}">{{ examination.name }}</button>
-                </td>
-                <td>{{ examination.start_date }}</td>
-                <td>{{ examination.end_date }}</td>
-                <td>{{ examination.created_at }}</td>
-            </tr>
+
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ loop.index }}
+                    </th>
+                    <td class="px-6 py-4">
+                        <a class="text-blue-700" href="{{url_for('teacher.examination.one', id=examination.id )}}">{{ examination.name }}</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ examination.start_date }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ examination.end_date }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ examination.created_at }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            {% else %}
+            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <p class="text-sm text-gray-500 dark:text-gray-400">You are yet to create an Examination
+                </p>
+            </div>
             {% endfor %}
-    </table>
+            </tbody>
+        </table>
 </div>
 {% endblock %}

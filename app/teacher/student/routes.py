@@ -9,7 +9,7 @@ from app.models import Student
 
 @bp.route('/', methods=['GET'])
 @login_required
-def all():
+def all() -> str:
     """Get all students"""
     students = Student.query.all()
     return render_template('teacher/student/all.html', students=students)

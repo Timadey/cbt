@@ -50,16 +50,16 @@ class CbtModel():
                 if key != '__class__':
                     setattr(self, key, value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation of the model
         """
         return f"<{type(self).__name__}> ({self.id})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return official representation of model"""
         return self.__str__()
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Return dictionary representation of the model
         """
         model_dict = self.__dict__.copy()

@@ -6,7 +6,7 @@ export async function set_question(url, cls) {
       async: true,
       success: function (response) {
         cls.questions = JSON.parse(response);
-      }
+     },
     });
 }
 
@@ -185,7 +185,7 @@ export class QuestionLoader {
 }
 
 $(document).ready(function () {
-  $("#spinner").hide();
+  // $("#spinner").hide();
 
   // Get a selectors needed
   const selectors = {
@@ -319,7 +319,7 @@ $(document).ready(function () {
 
   // Load first question
   let q = Object.keys(QueLoader.questions)[0];
-  $("#spinner").show(500, () => { QueLoader.load_question(q); })
+  $("#spinner").show(1000, () => { QueLoader.load_question(q); });
   $("#spinner").hide();
 
 });

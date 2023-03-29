@@ -3,8 +3,6 @@
 
 {% block app_content %}
 
-<div
-    class="w-full mb-4 block p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
     <!-- Tab -->
     <div class="mb-4 bg-white rounded-md border-b border-gray-200 dark:border-gray-700">
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#tabContents"
@@ -98,7 +96,7 @@
                 </div>
 
                 <!-- Spinner -->
-                <div id="spinner" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2">
+                <div id="spinner" role="status" class="absolute -translate-x-1/2 -translate-y-1/2 top-2/4 left-1/2" hidden>
                     <svg aria-hidden="true"
                         class="inline w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
                         viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -307,7 +305,6 @@
 
         </div>
     </div>
-</div>
 {% endblock app_content %}
 {% block javascript %}
 {{ super() }}

@@ -3,10 +3,15 @@
 """
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, PasswordField
-from wtforms.validators import InputRequired
+from wtforms.validators import InputRequired, Length, DataRequired, Email
+from helpers.forms.validators import unique
 
 class StudentForm(FlaskForm):
-    name = StringField('Student Name')
-    email = EmailField('Student Email')
+    """Form for creating a new student"""
+    name = StringField('Student Name', validators=[
+        InputRequired(), Length(3, 128)])
+    email = EmailField('Student Email', validators=[
+        InputRequired(), DataRequired(), Email(),
+        unique('users', 'email', 'Email already exist')])
     password = PasswordField('Password', default='password')
     submit = SubmitField('Add Student')

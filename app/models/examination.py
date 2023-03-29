@@ -21,6 +21,7 @@ class Examination(CbtModel, db.Model):
         `name (str)`: Name of the examination e.g "2023/2024 CBT Examination - July"
         `start_date (datetime)`: Date and time the exam is starting
         `end_date (datetime)`: Date and time the exam is ending
+    Relationships:
         `subjects (List[models.Subject])`: Subjects to tested in the examination
         `question (List[models.QuestionPaper])`: All question papers in the examination
         `students`: List of students that took this examination
@@ -37,7 +38,15 @@ class Examination(CbtModel, db.Model):
 
 
 class Result(CbtModel, db.Model):
-    """Result of an examination. A weak entity between students and examination"""
+    """Result of an examination. A weak entity between students and examination
+    
+    Attributes:
+        question: The question related to this result
+        student: The student tha this result belongs to
+        token: Token used to to answer this question paper. Can only
+        be used one
+        time_submitted: The time the student submits the answered question paper
+        """
     __tablename__ = 'results'
     id = Column(Integer(), primary_key=True, unique=True, autoincrement=True)
     question_paper_id = Column(Integer, ForeignKey(

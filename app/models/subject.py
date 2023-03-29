@@ -64,6 +64,8 @@ class Subject(CbtModel, db.Model):
     Attributes:
         `name (str)`: Name of the Subject
         `teacher (models.Teacher)`: The teacher assigned to this subject
+        `examinations`: The examinations that this subjects have appeared in
+        `questions`: Past questions for this subject
     """
 
     # Map attributes to columns in the table

@@ -2,19 +2,23 @@
 """Routes for Examination"""
 import json
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, jsonify, session
+from flask import render_template, flash, redirect, url_for,\
+    request, jsonify, session, Response
 from flask_login import login_required
 from app import db
 from app.models import Examination, Student
 from app.models import Subject, QuestionPaper, Result
 from app.teacher.examination import bp
-from app.teacher.examination.forms import ExaminationForm, QuestionForm, EligibleStudentForm
+from app.teacher.examination.forms import ExaminationForm
+from typing import Union
+
+Response_ = Union[str, Response]
 
 
 @bp.route('/', methods=['GET'])
 @login_required
-def all():
-    """Get all examinations
+def all() -> str:
+    """Get all examinations.
     """
     exams = Examination.query.order_by(Examination.start_date.desc()).all()
     return render_template('teacher/examination/all.html', examinations=exams)
@@ -22,17 +26,18 @@ def all():
 
 @bp.route('/<string:id>', methods=['GET'])
 @login_required
-def one(id: str):
-    """Get a specific examination
+def one(id: str) -> str:
+    """Get a specific examination. Raises 404 if the examination
+    can not be found.
     """
     exam = Examination.query.join(QuestionPaper).where(
-        Examination.id == id).one()
+        Examination.id == id).one_or_404()
     return render_template('teacher/examination/one.html', examination=exam)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
 @login_required
-def create():
+def create() -> Response_:
     """Create a new examination period
     """
     form = ExaminationForm()
@@ -42,9 +47,6 @@ def create():
     if form.validate_on_submit():
         exam = Examination()
         exam.name = form.name.data
-        # start and end date need extra parsing
-        # bug: datetime not passed front client
-        # print value in str to see
         exam.start_date = form.start_date.data
         exam.end_date = form.end_date.data
         exam.subjects = [Subject.query.get(id) for id in form.subjects.data]
@@ -57,7 +59,7 @@ def create():
 
 @bp.route('/question/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
 @login_required
-def question(id: int):
+def question(id: int) -> str:
     """Get a particular question
     """
     question_paper = QuestionPaper.query.where(
@@ -71,15 +73,18 @@ def question(id: int):
                            question_paper=question_paper, students=ineligible_stu)
 
 
-
 ##############
 # JSON ROUTES
 ##############
 
 @bp.route('/make_eligible', methods=['POST'])
 @login_required
-def make_eligible():
-    """Make a student eligible to write a question paper"""
+def make_eligible() -> Response:
+    """Make a student eligible to write a question paper. It accepts a json
+    containing the id of the question paper and that of the student.
+
+    Raises 404 if the question paper or the student can't be found
+    """
     data = request.json
     data['question_paper_id'] = int(data.get('question_paper_id'))
     question_paper = QuestionPaper.query.where(
@@ -94,15 +99,15 @@ def make_eligible():
     else:
         return jsonify({'message': 'Student is already eligible'})
 
+
 @bp.route('/question/<int:id>/json', methods=['GET', 'POST'])
 @login_required
-def question_json(id: int):
-    """Return a json question or save a jsn question"""
+def question_json(id: int) -> Response:
+    """Return a json question or save a json question"""
     question_paper = QuestionPaper.query.where(
         QuestionPaper.id == id).one_or_404()
     d = question_paper.questions_dict
 
-    # return jsonify(question_paper.questions_dict)
     if request.method == 'GET':
         response = jsonify(d)
         return response
@@ -127,8 +132,11 @@ def question_json(id: int):
 
 @bp.route('/question_paper/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
 @login_required
-def question_paper(id):
-    """Return question apaper without the correct options"""
+def question_paper(id: int) -> Response:
+    """Return question paper without the correct options. The question paper
+    is sent to student to select the options. When it is submitted, the score
+    is calculated and the database updated accordingly
+    """
     result = Result.query.join(QuestionPaper).where(
         QuestionPaper.id == id).one_or_404()
     question_paper = result.question.questions_dict
@@ -151,7 +159,6 @@ def question_paper(id):
             'score': score,
             'callback': url_for('student.start_examination')
         })
-
 
 
 # @bp.route('/question/<int:id>/eligible', methods=['GET', 'POST'])
