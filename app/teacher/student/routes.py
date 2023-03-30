@@ -28,6 +28,6 @@ def create():
         student.email = form.email.data
         student.set_password('password')
         student.save()
-        flash('Student added successfully!')
+        flash('Student added successfully!', 'success')
         return jsonify(message="Student Added Sucessfully")
     return jsonify(errors=form.errors)
