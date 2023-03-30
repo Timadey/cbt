@@ -1,31 +1,39 @@
 {% extends 'teacher/base.html' %}
 
+<!-- Breadcrumb -->
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Examination', url_for('teacher.examination.all'), 'page')}}
+{{crumb.item(examination.name, '', 'page')}}
+
+{% endblock %}
+
+
 {% block app_content %}
-<div class="row">
-    <h2>{{ examination.name }}</h2>
+    <h5 class=" mb-2 font-bold text-2xl tracking-tight text-gray-900 dark:text-white">
+        {{examination.name}}
+    </h5>
+    <div class="grid grid-cols-2 gap-4">
     {% for paper in examination.questions %}
-    <div class="panel">
-        <div class="panel-body">
-            <div class="row">
-                <div class='col-md-1'>{{loop.index}}</div>
-                <div class='col-md-2'>{{ paper.subject.name }}</div>
-                <div class='col-md-2'>
-                    <a href="{{ url_for('teacher.examination.question', id=paper.id)}}">
-                        <button class="btn btn-primary">
-                            Questions <span class="badge"> {{ paper.questions_dict|length }}</span>
-                        </button>
-                    </a>
-                </div>
-                <div class='col-md-2'>
-                    <a href="#">
-                        <button class="btn btn-primary">
-                            Eligible Students <span class="badge"> {{ paper.students|length }}</span>
-                        </button>
-                    </a>
-                </div>
-            </div>
+        <div class="inline-block w-auto h-auto p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <a>
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{paper.subject.name}}</h5>
+            </a>
+            <a href="{{ url_for('teacher.examination.question', id=paper.id)}}">
+                <button type="button"
+                    class="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 
+                    rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 
+                    dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    Questions
+                    <span
+                        class="inline-flex items-center justify-center w-4 h-4 ml-2 text-xs 
+                        font-semibold text-blue-800 bg-blue-200 rounded-full">
+                        {{ paper.questions_dict|length }}
+                    </span>
+                </button>
+            </a>
         </div>
-    </div>
     {% endfor %}
-</div>
+    </div>
 {% endblock app_content %}

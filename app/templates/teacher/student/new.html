@@ -1,0 +1,10 @@
+
+    {% import 'components/modal.html' as modal %}
+    {{ modal.form(
+    'Add New Student',
+    'add-student-modal',
+    'add-student-form',
+    form,
+    "teacher.student.create",
+    'POST'
+    ) }}

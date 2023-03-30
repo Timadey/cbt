@@ -4,6 +4,7 @@
 from flask_wtf import FlaskForm
 from wtforms import EmailField, StringField, SubmitField, PasswordField
 from wtforms.validators import InputRequired, Length, DataRequired, Email
+from wtforms.widgets import HiddenInput
 from helpers.forms.validators import unique
 
 class StudentForm(FlaskForm):
@@ -13,5 +14,5 @@ class StudentForm(FlaskForm):
     email = EmailField('Student Email', validators=[
         InputRequired(), DataRequired(), Email(),
         unique('users', 'email', 'Email already exist')])
-    password = PasswordField('Password', default='password')
+    password = PasswordField('', widget=HiddenInput())
     submit = SubmitField('Add Student')

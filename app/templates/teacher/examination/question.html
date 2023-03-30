@@ -1,5 +1,17 @@
 {% extends 'teacher/base.html' %}
-{% import 'bootstrap/wtf.html' as wtf %}
+
+
+<!-- Breadcrumb -->
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Examination', url_for('teacher.examination.all'), 'page')}}
+{{crumb.item(question_paper.examination.name, url_for('teacher.examination.one', id=question_paper.examination.id), 'page')}}
+{{crumb.item('Questions', url_for('teacher.examination.question', id=question_paper.id), 'page')}}
+
+
+{% endblock %}
+
 
 {% block app_content %}
 
@@ -8,6 +20,7 @@
         <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#tabContents"
             role="tablist">
             <li class="mr-2" role="presentation">
+      
                 <button class="inline-block p-4 border-b-2 rounded-t-lg" id="question-tab" data-tabs-target="#question-tab-content"
                     type="button" role="tab" aria-controls="question-tab-content" aria-selected="true">Questions</button>
             </li>
@@ -143,9 +156,9 @@
                     </svg>
                 </button>
             </div>
-            <div id="question-pagination"class="mt-4" >
+            <div class="mt-4" >
                 <nav aria-label="Page navigation example">
-                    <ul class="inline-flex items-center -space-x-px">
+                    <ul id="question-pagination" class="inline-flex items-center -space-x-px">
                         {% for key in question_paper.questions_dict %}
                         <li id="{{key}}" name="question-number-btn"
                                 class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{loop.index}}
@@ -190,11 +203,13 @@
         <div id="result" role="tabpanel"
             aria-labelledby="result-tab">
             
-            {% for result in question_paper.results %}
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
+                            <th scope="col" class="px-6 py-3">
+                                S/N
+                            </th>
                             <th scope="col" class="px-6 py-3">
                                 Token
                             </th>
@@ -213,10 +228,15 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% for result in question_paper.results %}
+
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{result.token}}
+                                {{loop.index}}
                             </th>
+                            <td class="px-6 py-4">
+                                {{result.token}}
+                            </td>
                             <td class="px-6 py-4">
                                 {{result.student.name}}
                             </td>
@@ -230,62 +250,71 @@
                                 <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
                             </td>
                         </tr>
+                        {% else %}
+                        <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">No student has been added to this exam. Make a student eligible
+                                by pressing the
+                                <strong class="font-medium text-gray-800 dark:text-white">Add Eligibility</strong> button
+                            </p>
+                        </div>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
-            {% else %}
-            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                <p class="text-sm text-gray-500 dark:text-gray-400">No student has been added to this exam. Make a student eligible
-                    by pressing the
-                    <strong class="font-medium text-gray-800 dark:text-white">Add Eligibility</strong> button
-                </p>
-            </div>
-            {% endfor %}
 
         </div>
+        <!-- Eligibility Tab -->
         <div id="eligibility" role="tabpanel"
             aria-labelledby="eligibility-tab">
-            <div>
-                <button id="add-new-student-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
-                            focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
-                             dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
-                    <svg class="w-10 h-6 mr-2 -ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 
-                                    0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
-                        </path>
-                    </svg>
-                    Add New Student
-                </button>
+            <div class="flex justify-between">
+                <div class="relative overflow-x-auto sm:rounded-lg">
+                    <button id="add-new-student-btn" data-modal-target="add-student-modal" data-modal-toggle="add-student-modal"
+                        type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+                                    focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
+                                        dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
+                        <svg class="w-10 h-6 mr-2 -ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 
+                                            0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
+                            </path>
+                        </svg>
+                        Add New Student
+                    </button>
+                </div>
             </div>
 
 
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                {% for student in students %}
                 <table id="ineligible-students" class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
                             <th scope="col" class="px-6 py-3">
+                                S/N
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Student Name
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Date Added
+                                Student Email
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Action
                             </th>
                         </tr>
                     </thead>
+                {% for student in students %}
                     <tbody>
                         <tr id="{{student.id}}" name='student'
                         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {{student.name}}
-                            </th>
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ loop.index }}
+                        </th>
                             <td class="px-6 py-4">
-                                {{student.created_at}}
+                                {{student.name}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{student.email}}
                             </td>
                             <td class="px-6 py-4">
                                 <button type="button" id="make-eligible"
@@ -293,7 +322,6 @@
                             </td>
                         </tr>
                     </tbody>
-                </table>
                 {% else %}
                 <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
                     <p class="text-sm text-gray-500 dark:text-gray-400">All students are now eligible.
@@ -301,10 +329,13 @@
                     </p>
                 </div>
                 {% endfor %}
+                </table>
             </div>
 
         </div>
     </div>
+
+{% include 'teacher/student/new.html' %}
 {% endblock app_content %}
 {% block javascript %}
 {{ super() }}

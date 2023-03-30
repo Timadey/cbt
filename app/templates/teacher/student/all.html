@@ -1,29 +1,92 @@
 {% extends 'teacher/base.html' %}
 
-{% block app_content %}
-<div class="row">
-    <div>
-        <h2>All Students</h2>
-    </div>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">SN</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Date Added</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for student in students %}
-            <tr>
-                <th scope="row">{{ loop.index }}</th>
-                <td><a href="#">{{ student.name }}</button>
-                </td>
-                <td>{{ student.email }}</td>
-                <td>{{ student.created_at }}</td>
-            </tr>
-            {% endfor %}
-    </table>
-</div>
+<!-- Breadcrumb -->
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Student', '', 'page')}}
 {% endblock %}
+
+
+{% block app_content %}
+<div class="flex justify-between">
+    <h5 class=" mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">
+        All Students
+    </h5>
+    <div class="relative overflow-x-auto sm:rounded-lg">
+        <button id="add-new-student-btn" data-modal-target="add-student-modal" data-modal-toggle="add-student-modal"
+        type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+                        focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
+                            dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+            class="w-10 h-6 mr-2 -ml-1"
+            aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z">
+                </path>
+            </svg>
+            Add New Student
+        </button>
+    </div>
+
+</div>
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+            <th scope="col" class="px-6 py-3">
+                S/N
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Name
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Email
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Date Added
+            </th>
+            <th scope="col" class="px-6 py-3">
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+
+        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                {{ loop.index }}
+            </th>
+            <td class="px-6 py-4">
+                <a class="text-blue-700">{{
+                    student.name }}</a>
+            </td>
+            <td class="px-6 py-4">
+                <a class="text-blue-700">{{
+                    student.email }}</a>
+            </td>
+            <td class="px-6 py-4">
+                {{ student.created_at }}
+            </td>
+            <td class="px-6 py-4">
+                <a href="" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+            </td>
+        </tr>
+        {% else %}
+        <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                You are yet to add any student. Click 'Add New Student' to add students
+            </p>
+        </div>
+        {% endfor %}
+    </tbody>
+</table>
+{% include 'teacher/student/new.html' %}
+{% endblock %}
+
+
+{% block javascript %}
+{{ super() }}
+<script type="module" src="{{url_for('static',filename='js/services.js')}}"></script>
+<script type="module" src="{{url_for('static',filename='js/form_actions.js')}}"></script>
+{% endblock javascript %}

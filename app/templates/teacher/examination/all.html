@@ -1,24 +1,32 @@
 {% extends 'teacher/base.html' %}
 
+<!-- Breadcrumb -->
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Examination', '', 'page')}}
+{% endblock %}
+
 {% block app_content %}
     <div class="flex justify-between">
-    <h5 class=" mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">
-        All Examinations
-    </h5>
-        <div class="relative overflow-x-auto sm:rounded-lg">
-            <button id="add-new-student-btn" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
-                        focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
-                            dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
-                <svg class="w-10 h-6 mr-2 -ml-1" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 
-                                0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z">
-                    </path>
-                </svg>
-                Add New Student
-            </button>
-        </div>
+        <h5 class=" mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">
+            All Examinations
+        </h5>
+            <div class="relative overflow-x-auto sm:rounded-lg">
+                <button id="add-new-examination-btn" data-modal-target="add-examination-modal" data-modal-toggle="add-examination-modal"
+                    type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 
+                                        focus:ring-[#2557D6]/50 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center
+                                            dark:focus:ring-[#2557D6]/50 mr-2 mb-2">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                        class="w-10 h-6 mr-2 -ml-1"
+                        aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125">
+                        </path>
+                    </svg>
+                    New Examination
+                </button>
+            </div>
     </div>
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -74,5 +82,13 @@
             {% endfor %}
             </tbody>
         </table>
-</div>
+{% include 'teacher/examination/new.html' %}
+
 {% endblock %}
+
+{% block javascript %}
+{{ super() }}
+<script type="module" src="{{url_for('static',filename='js/services.js')}}"></script>
+<script type="module" src="{{url_for('static',filename='js/form_actions.js')}}"></script>
+
+{% endblock javascript %}

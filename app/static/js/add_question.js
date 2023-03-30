@@ -172,14 +172,16 @@ export class QuestionLoader {
   html_insert_pagination() {
     // console.log('pagination' + this.curr_question_num);
     // console.log($(`li[name='question-number-btn'][id='${this.curr_question_num}']`).length);
-    if ($(`li[name='question-number-btn'][id='${this.curr_question_num}']`).length <= 0) {
-      $(`li[name='question-number-btn'][id='${Number(this.curr_question_num) - 1 }']`).after(
-        `<li id='${this.curr_question_num }' name='question-number-btn'
+    const html = `<li id='${this.curr_question_num }' name='question-number-btn'
               class='px-3 py-2 leading-tight text-gray-500 bg-white border \
               border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'>\
               ${Number(this.curr_question_num) + 1}
       </li>`
-      );
+    if (this.selectors.question_pagination.children().length == 0) {
+      this.selectors.question_pagination.append(html);
+    }
+    else if ($(`li[name='question-number-btn'][id='${this.curr_question_num}']`).length <= 0) {
+      $(`li[name='question-number-btn'][id='${Number(this.curr_question_num) - 1}']`).after(html);
     }
   }
 }
@@ -292,7 +294,8 @@ $(document).ready(function () {
       }
       return alert(msg);
     }
-    QueLoader.submit_questions(url, ()=> alert("Question uploaded successfully!"));
+    QueLoader.submit_questions(url, () => alert("Question uploaded successfully!"));
+    
   })
 
   // When Option list is clicked (Option is presumably changed)

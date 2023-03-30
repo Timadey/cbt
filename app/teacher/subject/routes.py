@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Routes for Subject"""
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, jsonify
 from flask_login import login_required
 from app import db
 from app.models import Teacher
@@ -16,10 +16,15 @@ def all():
     """
     subjects = Subject.query.join(Teacher).order_by(
         Subject.created_at.desc()).all()
-    return render_template('teacher/subject/all.html', subjects=subjects)
+    teachers = Teacher.query.all()
+    form = SubjectForm()
+    form.teacher.choices = [(t.id, t.name) for t in teachers]
+    return render_template('teacher/subject/all.html',
+                           subjects=subjects,
+                           form=form)
 
 
-@bp.route('/create', methods=['GET', 'POST'])
+@bp.route('/create', methods=['POST'])
 @login_required
 def create():
     """Create a new Subject
@@ -34,5 +39,5 @@ def create():
         db.session.add(subject)
         db.session.commit()
         flash(f'New Subject added: {subject.name}', 'success')
-        return redirect(url_for('teacher.subject.all'))
-    return render_template('teacher/subject/new.html', form=form)
+        return jsonify(message="Subject Added Sucessfully")
+    return jsonify(errors=form.errors)

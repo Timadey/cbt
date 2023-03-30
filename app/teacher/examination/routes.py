@@ -10,6 +10,8 @@ from app.models import Examination, Student
 from app.models import Subject, QuestionPaper, Result
 from app.teacher.examination import bp
 from app.teacher.examination.forms import ExaminationForm
+from app.teacher.student.forms import StudentForm
+
 from typing import Union
 
 Response_ = Union[str, Response]
@@ -21,7 +23,11 @@ def all() -> str:
     """Get all examinations.
     """
     exams = Examination.query.order_by(Examination.start_date.desc()).all()
-    return render_template('teacher/examination/all.html', examinations=exams)
+    form = ExaminationForm()
+    all_subjects = Subject.query.all()
+    form.subjects.choices = [(sub.id, sub.name) for sub in all_subjects]
+    return render_template('teacher/examination/all.html',
+                           examinations=exams, form=form)
 
 
 @bp.route('/<string:id>', methods=['GET'])
@@ -35,7 +41,7 @@ def one(id: str) -> str:
     return render_template('teacher/examination/one.html', examination=exam)
 
 
-@bp.route('/create', methods=['GET', 'POST'])
+@bp.route('/create', methods=['POST'])
 @login_required
 def create() -> Response_:
     """Create a new examination period
@@ -43,7 +49,6 @@ def create() -> Response_:
     form = ExaminationForm()
     all_subjects = Subject.query.all()
     form.subjects.choices = [(sub.id, sub.name) for sub in all_subjects]
-    print('start_date', form.start_date.data, 'end_date', form.end_date.data)
     if form.validate_on_submit():
         exam = Examination()
         exam.name = form.name.data
@@ -53,8 +58,8 @@ def create() -> Response_:
         db.session.add(exam)
         db.session.commit()
         flash(f'New Examination created: {exam.name}', 'info')
-        return redirect(url_for('teacher.examination.all'))
-    return render_template('teacher/examination/new.html', form=form)
+        return jsonify(message=f'New Examination created: {exam.name}')
+    return jsonify(errors=form.errors)
 
 
 @bp.route('/question/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
@@ -64,13 +69,15 @@ def question(id: int) -> str:
     """
     question_paper = QuestionPaper.query.where(
         QuestionPaper.id == id).one_or_404()
+    form = StudentForm()
     eligible_stu = question_paper.students
     all_students = Student.query.all()
     # filter out students that are not eligible for this examination
     ineligible_stu = list(
         filter(lambda stu: stu not in eligible_stu, all_students))
     return render_template('teacher/examination/question.html',
-                           question_paper=question_paper, students=ineligible_stu)
+                           question_paper=question_paper, students=ineligible_stu,
+                           form=form)
 
 
 ##############
@@ -95,9 +102,9 @@ def make_eligible() -> Response:
         question_paper.students.append(student)
         db.session.add(question_paper)
         db.session.commit()
-        return jsonify({'message': 'Student made eligible successfully'})
+        return jsonify({'success': True, 'message': 'Student made eligible successfully'})
     else:
-        return jsonify({'message': 'Student is already eligible'})
+        return jsonify({'success': False, 'message': 'Student is already eligible'})
 
 
 @bp.route('/question/<int:id>/json', methods=['GET', 'POST'])
@@ -137,8 +144,9 @@ def question_paper(id: int) -> Response:
     is sent to student to select the options. When it is submitted, the score
     is calculated and the database updated accordingly
     """
+    token = session['examination_token']
     result = Result.query.join(QuestionPaper).where(
-        QuestionPaper.id == id).one_or_404()
+        QuestionPaper.id == id, Result.token == token).one_or_404()
     question_paper = result.question.questions_dict
     if request.method == 'GET':
         for val in question_paper.values():
@@ -159,17 +167,3 @@ def question_paper(id: int) -> Response:
             'score': score,
             'callback': url_for('student.start_examination')
         })
-
-
-# @bp.route('/question/<int:id>/eligible', methods=['GET', 'POST'])
-# @login_required
-# def eligible(id):
-#     """Get all or add new students that are eligible to write this question"""
-#     question_paper = QuestionPaper.query.join(
-#         Result).where(QuestionPaper.id == 113).all()
-#     students = Student.query.all()
-#     students = filter((lambda st_id: st_id != rst.student_id for rst in results), students)
-#     form = EligibleStudentForm()
-#     form.students.choices = [(stu.id, stu.name) for stu in students]
-#     if form.validate_on_submit():
-#         for student in form.

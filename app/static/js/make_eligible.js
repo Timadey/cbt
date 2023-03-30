@@ -21,6 +21,9 @@ $(function () {
         contentType: 'application/json',
         success: function (response) {
             alert(response.message);
+            if (response.success == true) {
+                $(`tr[name='student'][id='${student_id}']`).remove();
+            }
         }
     });
     }
