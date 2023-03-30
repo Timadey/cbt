@@ -25,12 +25,11 @@ $(function () {
     QueLoader.save_question();
     let next_question_num = Number(QueLoader.curr_question_num) + 1;
     // console.log(next_question_num)
-    if (next_question_num >= Object.keys(QueLoader.questions).length) {
-      next_question_num = Object.keys(QueLoader.questions).length;
+    if (next_question_num < Object.keys(QueLoader.questions).length) {
+      QueLoader.curr_question_num = QueLoader.load_question(next_question_num);
+      style_pagination(next_question_num);
     }
     // console.log(next_question_num)
-    QueLoader.curr_question_num = QueLoader.load_question(next_question_num);
-    style_pagination(next_question_num);
   });
 
   // When Prev Button is clicked
