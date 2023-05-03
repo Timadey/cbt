@@ -43,7 +43,7 @@ def register() -> Response_:
         db.session.commit()
         flash('Registration successful! Please login', 'success')
         return redirect(url_for('teacher.auth.login'))
-    return render_template('teacher/register.html',
+    return render_template('teacher/auth/register.html',
                            form=register_form, title='Register')
 
 

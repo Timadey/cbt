@@ -145,7 +145,10 @@ def question_paper(id: int) -> Response:
     is sent to student to select the options. When it is submitted, the score
     is calculated and the database updated accordingly
     """
-    token = session['examination_token']
+    if request.args.get('tok') is not None:
+        token = request.args.get('tok')
+    else:
+        token = session['examination_token']
     result = Result.query.join(QuestionPaper).where(
         QuestionPaper.id == id, Result.token == token).one_or_404()
     question_paper = result.question.questions_dict
@@ -163,7 +166,8 @@ def question_paper(id: int) -> Response:
         result.time_submitted = datetime.now()
         db.session.add(result)
         db.session.commit()
-        del session['examination_token']
+        if session.get('examination_token') is not None:
+            del session['examination_token']
         return jsonify({
             'score': score,
             'callback': url_for('student.start_examination')

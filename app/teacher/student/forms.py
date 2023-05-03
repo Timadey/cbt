@@ -13,6 +13,6 @@ class StudentForm(FlaskForm):
         InputRequired(), Length(3, 128)])
     email = EmailField('Student Email', validators=[
         InputRequired(), DataRequired(), Email(),
-        unique('users', 'email', 'Email already exist')])
+        unique('students', 'email', 'Email already exist')])
     password = PasswordField('', widget=HiddenInput())
     submit = SubmitField('Add Student')

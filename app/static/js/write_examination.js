@@ -17,7 +17,8 @@ $(function () {
     question_number_btn: $("li[name='question-btn']")
   };
   const id = $("div[name='question-paper']").attr('id');
-  const url = `http://localhost:5000/teacher/examination/question_paper/${id}`;
+  const token = $("span[name='token']").attr('id');
+  const url = `http://localhost:5000/teacher/examination/question_paper/${id}?tok=${token}`;
   const QueLoader = new QuestionLoader(url, selectors);
 
   // When Next Button is clicked
@@ -29,7 +30,7 @@ $(function () {
       QueLoader.curr_question_num = QueLoader.load_question(next_question_num);
       style_pagination(next_question_num);
     }
-    // console.log(next_question_num)
+  // console.log(next_question_num)
   });
 
   // When Prev Button is clicked

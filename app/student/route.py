@@ -47,4 +47,4 @@ def write_examination() -> str:
         Result.token == token).first_or_404()
     question_paper = result.question
     return render_template('student/write_examination.html',
-                           question_paper=question_paper)
+                           question_paper=question_paper, token=token)

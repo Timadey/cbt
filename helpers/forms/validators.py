@@ -16,7 +16,7 @@ def unique(table: str, column: str,
     """Validate the email does not exist in the database"""
     def validate(form: FlaskForm, field: Field) -> NoReturn:
         stmt = text(f'SELECT {column} FROM {table} WHERE {column}=:x')
-        res = db.session.execute(stmt, {'x': {field.data}}).fetchall()
+        res = db.session.execute(stmt, {'x': "{field.data}"}).fetchall()
         if len(res) is not 0:
             raise ValidationError(msg)
     return validate

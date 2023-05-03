@@ -23,7 +23,7 @@ class RegisterForm(FlaskForm):
         InputRequired(), Length(3, 128)])
     email = EmailField('Email', validators=[
         InputRequired(), DataRequired(), Email(),
-        unique('users', 'email', 'Email already exist')])
+        unique('teachers', 'email', 'Email already exist')])
     password = PasswordField('Password', validators=[
         InputRequired(), DataRequired()])
     password_again = PasswordField('Retype Password', validators=[
