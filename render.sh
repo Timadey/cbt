@@ -2,5 +2,5 @@
 pip install --upgrade pip
 pip install -r requirements.txt
 pip install gunicorn
-cd "static/" || exit
+cd "app/static/" || exit
 npm install
