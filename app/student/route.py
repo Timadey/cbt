@@ -42,7 +42,7 @@ def write_examination() -> str:
 
     Raise 404 if the question paper is not found
     """
-    token = session.get('examination_token')
+    token = session['examination_token']
     result = Result.query.join(QuestionPaper).where(
         Result.token == token).first_or_404()
     question_paper = result.question

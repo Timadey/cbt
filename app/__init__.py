@@ -5,11 +5,13 @@ from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager
 from flask_session import Session
+from flask_cors import CORS
 
 # Dependencies Initialization
 db = SQLAlchemy()
 migrate = Migrate()
 bootstrap = Bootstrap()
+cors = CORS()
 sess = Session()
 login_manager = LoginManager()
 login_manager.login_view = 'teacher.auth.login'
@@ -31,6 +33,7 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     sess.init_app(app)
     bootstrap.init_app(app)
+    cors.init_app(app)
 
 
     # Register Blueprints

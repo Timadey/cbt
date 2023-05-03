@@ -5,6 +5,7 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for,\
     request, jsonify, session, Response
 from flask_login import login_required
+from flask_cors import cross_origin
 from app import db
 from app.models import Examination, Student
 from app.models import Subject, QuestionPaper, Result
@@ -85,7 +86,7 @@ def question(id: int) -> str:
 ##############
 
 @bp.route('/make_eligible', methods=['POST'])
-@login_required
+# @login_required
 def make_eligible() -> Response:
     """Make a student eligible to write a question paper. It accepts a json
     containing the id of the question paper and that of the student.
@@ -108,7 +109,7 @@ def make_eligible() -> Response:
 
 
 @bp.route('/question/<int:id>/json', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def question_json(id: int) -> Response:
     """Return a json question or save a json question"""
     question_paper = QuestionPaper.query.where(
@@ -138,7 +139,7 @@ def question_json(id: int) -> Response:
 
 
 @bp.route('/question_paper/<int:id>', strict_slashes=True, methods=['GET', 'POST'])
-@login_required
+# @login_required
 def question_paper(id: int) -> Response:
     """Return question paper without the correct options. The question paper
     is sent to student to select the options. When it is submitted, the score
