@@ -257,7 +257,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`am_dev`@`localhost` SQL SECURITY DEFINER */
+-- /*!50013 DEFINER=`am_dev`@`localhost` SQL SECURITY DEFINER */
 /*!50001 VIEW `users` AS select `teachers`.`id` AS `id`,`teachers`.`email` AS `email`,`teachers`.`name` AS `name`,`teachers`.`created_at` AS `created_at`,`teachers`.`modified_at` AS `modified_at`,`teachers`.`password` AS `password` from `teachers` union select `students`.`id` AS `id`,`students`.`email` AS `email`,`students`.`name` AS `name`,`students`.`created_at` AS `created_at`,`students`.`modified_at` AS `modified_at`,`students`.`password` AS `password` from `students` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;

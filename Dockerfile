@@ -16,8 +16,8 @@ RUN apt-get update && apt-get install -y nodejs npm
 COPY . .
 
 # Set environment variables from .env file.
-# **Replace /cbt./env with actual path of your .env if not in root dir
-ENV $(cat /cbt/.env | grep -v '#' | xargs)
+# **Replace /etc/secrets/.env with actual path of your .env if not in root dir
+ENV $(cat /etc/secrets/.env | grep -v '#' | xargs)
 
 # Install Node.js dependencies in the static directory
 WORKDIR /cbt/app/static

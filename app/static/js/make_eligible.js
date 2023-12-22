@@ -1,5 +1,5 @@
 $(function () {
-  const url = `http://localhost:5000/teacher/examination/make_eligible`;
+  const url = `/teacher/examination/make_eligible`;
   const question_paper_id = $("div[name='question-paper']").attr('id');
     const student_id = $("tr[name='student']").attr('id');
     console.log(student_id)

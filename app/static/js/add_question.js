@@ -208,7 +208,7 @@ $(document).ready(function () {
   // Set URL to get question from server
   const url_ = window.location.pathname.split('/');
   const id = url_[url_.length - 1];
-  const url = `http://localhost:5000/teacher/examination/question/${id}/json`;
+  const url = `/teacher/examination/question/${id}/json`;
 
   // Initiate Question Loader
   const QueLoader = new QuestionLoader(url, selectors)
