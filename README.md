@@ -14,6 +14,8 @@ Check [USAGE.md](/USAGE.md) on how to use the system
 
 CBT is a user-friendly Computer-Based Test (CBT) application designed specifically for academic institutions to seamlessly conduct exams in a digital format. This application streamlines the process of exam administration, empowering educators to create, manage, and assess examinations efficiently.
 
+![examination](/img/examination.png)
+
 ### Key Feature
 - **Exam Creation**: Teachers can effortlessly create exams with detailed subject configurations.
 - **Subject Management**: Easy association of subjects with question papers for better organization.
