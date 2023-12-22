@@ -5,3 +5,7 @@ node_modules
 package-lock.json
 DataTables
 flask_session
+__pycache__
+app/__pycache__
+__pycache__/
+*.pyc

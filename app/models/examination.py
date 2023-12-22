@@ -53,7 +53,7 @@ class Result(CbtModel, db.Model):
         'question_papers.id'), nullable=False)
     student_id = Column(String(60), ForeignKey('students.id'), nullable=False)
     token = Column(Integer, autoincrement=True,
-                   nullable=False, default=microsecond())
+                   nullable=False, default=microsecond)
     score = Column(Integer, nullable=True)
     time_submitted = Column(DateTime, nullable=True)
     student = relationship('Student', viewonly=True, back_populates='results')

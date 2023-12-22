@@ -17,7 +17,7 @@ def unique(table: str, column: str,
     def validate(form: FlaskForm, field: Field) -> NoReturn:
         stmt = text(f'SELECT {column} FROM {table} WHERE {column}=:x')
         res = db.session.execute(stmt, {'x': "{field.data}"}).fetchall()
-        if len(res) is not 0:
+        if len(res) != 0:
             raise ValidationError(msg)
     return validate
 
