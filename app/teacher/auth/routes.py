@@ -31,7 +31,7 @@ def login()-> Response_:
 def register() -> Response_:
     """Register new teacher"""
     if current_user.is_authenticated:
-        return redirect(url_for('teacher.dashboard'))
+        return redirect(url_for('teacher.main.dashboard'))
     register_form = RegisterForm()
     if register_form.validate_on_submit():
         teacher = Teacher(
