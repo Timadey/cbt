@@ -1,6 +1,6 @@
-### Live demo: [cbtim.onrender.com](https://cbtim.inrender.com) 🎉
+### Live demo: [cbtim.onrender.com](https://cbtim.onrender.com) 🎉
 ### To create examinations
-Navigate to [cbtim.onrender.com/teacher](cbtim.onrender.com/teacher)
+Navigate to [cbtim.onrender.com/teacher](https://cbtim.onrender.com/teacher)
     Use the following demo login details
     
     ```
@@ -16,7 +16,7 @@ Switch to the result tab to get the token for any student that have not written 
 ![result-tab](/img/result-tab.png)
 
 ### Write Examination
-Navigate to the root url to write the examination. [cbtim.onrender.com](cbtim.onrender.com)
+Navigate to the root url to write the examination. [cbtim.onrender.com](https://cbtim.onrender.com)
 Enter the examination token you got from the result tab and start examination. It is worth noting that a token can only be used once.
 ![enter-token](/img/enter-token.png)
 Start Examination
