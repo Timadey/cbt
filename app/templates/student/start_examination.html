@@ -7,6 +7,15 @@
     <form method='POST', action='{{url_for('student.start_examination')}}' class="space-y-6" action="#">
         {{form.hidden_tag()}}
         <h5 class="text-xl font-medium text-gray-900 dark:text-white">Enter Examination Token</h5>
+        <p class="text-sm text-gray-500 dark:text-gray-300">
+        Need help? Read the
+        <a href="https://github.com/Timadey/cbt/blob/main/USAGE.md"
+           target="_blank" rel="noopener noreferrer"
+           class="text-blue-600 hover:underline dark:text-blue-400">
+            usage guide
+        </a>
+        for simple step-by-step instructions on how to use this application.
+    </p>
         <div>
             <label for="token" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Enter Token</label>
             <input type="number" name="token" id="token"
