@@ -1,0 +1,179 @@
+{% extends 'teacher/base.html' %}
+
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Student', url_for('teacher.student.all'), '')}}
+{{crumb.item('Enroll Face', '', 'page')}}
+{% endblock %}
+
+{% block app_content %}
+<div class="max-w-5xl mx-auto py-8">
+    <div class="mb-8">
+        <a href="{{ url_for('teacher.student.all') }}"
+            class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Students
+        </a>
+    </div>
+
+    <!-- Enrollment Dashboard -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <div class="flex flex-col lg:flex-row">
+            <!-- Camera & Preview Column -->
+            <div class="lg:w-3/5 relative bg-gray-950">
+                <!-- Camera View -->
+                <div class="aspect-video relative overflow-hidden bg-black flex items-center justify-center">
+                    <video id="webcam" autoplay playsinline
+                        class="w-full h-full object-cover grayscale-[0.2] brightness-110"></video>
+                    <canvas id="canvas" class="hidden"></canvas>
+
+                    <!-- Viewfinder Overlay -->
+                    <div class="absolute inset-0 border-[60px] border-black/50 pointer-events-none">
+                        <div
+                            class="w-full h-full border-2 border-indigo-500/30 rounded-[80px] flex items-center justify-center">
+                            <div
+                                class="w-48 h-64 border-2 border-dashed border-indigo-400/50 rounded-full animate-pulse">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enrollment Progress Indicator (Floating) -->
+                    <div class="absolute top-6 left-6 right-6 flex space-x-2">
+                        {% for i in range(1, 4) %}
+                        <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden backdrop-blur-md">
+                            <div id="progress-{{i}}"
+                                class="h-full bg-indigo-500 w-0 transition-all duration-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Captured Thumbnails Grid -->
+                <div class="p-6 bg-gray-900 grid grid-cols-3 gap-4">
+                    {% for i in range(1, 4) %}
+                    <div
+                        class="aspect-square rounded-2xl bg-gray-800 border-2 border-dashed border-gray-700 flex flex-col items-center justify-center overflow-hidden relative group">
+                        <img id="preview-{{i}}" src="" class="absolute inset-0 w-full h-full object-cover hidden">
+                        <div id="placeholder-{{i}}" class="text-center group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6 text-gray-600 mx-auto mb-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Portrait
+                                {{i}}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Details & Control Column -->
+            <div class="lg:w-2/5 p-10 flex flex-col justify-between bg-gray-50 dark:bg-gray-850">
+                <div>
+                    <div class="flex items-center space-x-4 mb-2">
+                        <div
+                            class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-gray-900 dark:text-white">{{ student.name }}</h3>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ student.email }}</p>
+                        </div>
+                    </div>
+
+                    <hr class="my-8 border-gray-100 dark:border-gray-700">
+
+                    <h4 class="text-[11px] font-black text-indigo-500 uppercase tracking-[0.2em] mb-6">Enrollment
+                        Procedure</h4>
+
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <span
+                                class="w-6 h-6 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Capture a clear
+                                <b>center-facing</b> portrait of the student.
+                            </p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <span
+                                class="w-6 h-6 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Ask the student to tilt
+                                their head slightly to the <b>left</b>.</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <span
+                                class="w-6 h-6 rounded-full bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Ask the student to tilt
+                                their head slightly to the <b>right</b>.</p>
+                        </div>
+                    </div>
+
+                    <div id="status-message"
+                        class="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 rounded-2xl hidden transition-all duration-300">
+                        <p class="text-[11px] text-amber-700 dark:text-amber-400 font-bold leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="mt-12 space-y-4">
+                    <button id="btn-capture"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-5 rounded-3xl shadow-2xl shadow-indigo-100 dark:shadow-none transition-all active:scale-95 flex items-center justify-center space-x-3 group">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span id="btn-text" class="uppercase tracking-widest text-xs">Capture Base Portrait</span>
+                    </button>
+
+                    <button id="btn-reset"
+                        class="w-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-400 hover:text-red-500 font-bold py-4 rounded-3xl transition-all text-xs uppercase tracking-widest hidden">
+                        Clear All and Restart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Overlay -->
+<div id="success-overlay"
+    class="fixed inset-0 z-50 bg-indigo-600 flex flex-col items-center justify-center text-white p-6 hidden">
+    <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mb-8 animate-bounce">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+        </svg>
+    </div>
+    <h2 class="text-4xl font-black mb-4">Enrollment Complete!</h2>
+    <p class="text-indigo-100 text-lg mb-12 text-center max-w-md">{{ student.name }} has been successfully enrolled for
+        AI proctoring.</p>
+    <a href="{{ url_for('teacher.student.all') }}"
+        class="text-indigo-600 px-12 py-4 rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl  transition-colors">
+        Finish and Go Back
+    </a>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+<script src="{{url_for('static',filename='js/admin_enrollment.js')}}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initAdminEnrollment({
+            studentId: "{{ student.id }}",
+            studentName: "{{ student.name }}"
+        });
+    });
+</script>
+{% endblock %}

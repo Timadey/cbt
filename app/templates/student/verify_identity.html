@@ -1,0 +1,174 @@
+{% extends 'student/base.html' %}
+
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Identity Verification', '', 'page')}}
+{% endblock %}
+
+{% block app_content %}
+<div class="max-w-4xl mx-auto py-12 px-4">
+    <!-- Header Section -->
+    <div class="text-center mb-10">
+        <h2 class="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">Identity Verification</h2>
+        <div
+            class="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium border border-blue-100 dark:border-blue-800">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+            This examination is electronically proctored
+        </div>
+        <p class="mt-6 text-gray-500 dark:text-gray-400 max-w-lg mx-auto leading-relaxed">
+            To ensure the integrity of your assessment, we need to verify your identity. Please ensure your face is
+            clearly visible and centered.
+        </p>
+    </div>
+
+    <!-- Main Verification Card -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
+        <div class="flex flex-col md:flex-row">
+            <!-- Camera Preview Area -->
+            <div class="relative w-full md:w-3/5 bg-gray-950 aspect-[4/3] md:aspect-auto">
+                <video id="webcam" autoplay playsinline
+                    class="w-full h-full object-cover grayscale-[0.3] brightness-110"></video>
+                <canvas id="canvas" class="hidden"></canvas>
+
+                <!-- Face Overlay -->
+                <div class="absolute inset-0 border-[40px] border-black/40 pointer-events-none">
+                    <div class="w-full h-full border-2 border-white/50 rounded-[60px] relative">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-64 h-80 border-2 border-dashed border-indigo-400/60 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Overlay (Dynamic) -->
+                <div id="capture-overlay"
+                    class="absolute inset-0 flex items-center justify-center bg-black/60 hidden transition-opacity duration-300">
+                    <div class="text-center">
+                        <div
+                            class="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4">
+                        </div>
+                        <p class="text-white font-bold tracking-widest uppercase text-sm">Processing Identity...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interaction Sidebar -->
+            <div class="w-full md:w-2/5 p-8 flex flex-col justify-between bg-gray-50 dark:bg-gray-850">
+                <div>
+                    <h4 class="text-xs font-black text-indigo-500 uppercase tracking-widest mb-6">Security Step</h4>
+
+                    <!-- Guidance Messages -->
+                    <div id="guidance-box" class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
+                                <span class="text-green-600 dark:text-green-400 text-xs font-bold">1</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Position yourself in the
+                                center of the frame.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center flex-shrink-0">
+                                <span class="text-indigo-600 dark:text-indigo-400 text-xs font-bold">2</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Remove hats, masks, or
+                                sunglasses.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                <span class="text-amber-600 dark:text-amber-400 text-xs font-bold">3</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Ensure adequate lighting in
+                                your environment.</p>
+                        </div>
+                    </div>
+
+                    <!-- Enrollment Progress (Hidden initially) -->
+                    <div id="not-enrolled-box"
+                        class="mt-8 p-6 bg-red-50 dark:bg-red-900/20 rounded-3xl border border-red-100 dark:border-red-800 hidden">
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div
+                                class="w-8 h-8 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <h5 class="text-sm font-bold text-red-900 dark:text-red-400">Profile Not Found</h5>
+                        </div>
+                        <p class="text-[11px] text-red-700 dark:text-red-400 leading-relaxed mb-4 font-medium">
+                            Your face profile has not been enrolled yet. Please contact your examination administrator
+                            or teacher to complete your enrollment.
+                        </p>
+                        <a href="{{ url_for('student.start_examination') }}"
+                            class="inline-flex items-center text-[10px] font-black uppercase tracking-widest text-red-600 hover:text-red-700">
+                            Go Back to Token Entry
+                            <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Footer Action -->
+                <div class="mt-10">
+                    <button id="btn-verify"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl shadow-xl shadow-indigo-100 dark:shadow-none transition-all active:scale-95 flex items-center justify-center space-x-3 group text-sm uppercase tracking-widest">
+                        <span id="btn-text">Verify Identity</span>
+                        <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </button>
+                    <p class="mt-4 text-center text-[10px] text-gray-400 font-medium">Identity data is encrypted and
+                        used only for proctoring.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Failed Modal -->
+<div id="fail-modal"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden p-4">
+    <div
+        class="bg-white dark:bg-gray-900 rounded-3xl max-w-sm w-full p-8 text-center shadow-2xl transform transition-all">
+        <div class="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Verification Failed</h3>
+        <p id="fail-reason" class="text-sm text-gray-500 dark:text-gray-400 mb-8">We couldn't match your identity
+            profile. Please try again with better lighting.</p>
+        <button onclick="document.getElementById('fail-modal').classList.add('hidden')"
+            class="w-full bg-gray-900 dark:bg-white dark:text-gray-900 text-white font-bold py-3 rounded-xl">Retry
+            Capture</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+<script src="{{url_for('static',filename='js/identity_verification.js')}}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        initIdentityVerification({
+            studentId: "{{ student_id }}",
+            studentName: "{{ student_name }}",
+            redirectUrl: "{{ url_for('student.write_examination') }}"
+        });
+    });
+</script>
+{% endblock %}

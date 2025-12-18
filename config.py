@@ -35,3 +35,6 @@ class Config():
     LIVEKIT_API_KEY = getenv('LIVEKIT_API_KEY')
     LIVEKIT_API_SECRET = getenv('LIVEKIT_API_SECRET')
     LIVEKIT_URL = getenv('LIVEKIT_URL')
+
+    # Identity Enrollment Server
+    ENROLLMENT_SERVER_URL = getenv('ENROLLMENT_SERVER_URL', 'http://localhost:8000')

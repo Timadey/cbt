@@ -31,3 +31,10 @@ def create():
         flash('Student added successfully!', 'success')
         return jsonify(message="Student Added Sucessfully")
     return jsonify(errors=form.errors)
+    
+@bp.route('/enroll/<student_id>', methods=['GET'])
+@login_required
+def enroll_face(student_id):
+    """Render the enrollment page for a specific student"""
+    student = Student.query.get_or_404(student_id)
+    return render_template('teacher/student/enroll_face.html', student=student)

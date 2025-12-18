@@ -47,12 +47,19 @@ $(function () {
   });
 
   // When Submit Button is clicked
-  selectors.submit_question_btn.on('click', function () {
+  selectors.submit_question_btn.on('click', async function () {
     // console.log(QueLoader.questions)
     QueLoader.save_question();
     console.log(QueLoader.questions);
+
+    // Ensure proctoring logs are saved before submission
+    if (window.proctoringClient) {
+      window.proctoringClient.isExplicitlySubmitting = true;
+      await window.proctoringClient.sendFinalLogs();
+    }
+
     QueLoader.submit_questions(url, (res) => {
-        alert("Examination submitted successfully!");
+      alert("Examination submitted successfully!");
       // alert(`Your score is ${res.score}/${Object.keys(QueLoader.questions).length}`);
       window.location.replace(res.callback);
     });
@@ -108,8 +115,15 @@ $(function () {
     }, 1000);
   }
 
-  function autoSubmit() {
+  async function autoSubmit() {
     QueLoader.save_question();
+
+    // Ensure proctoring logs are saved before submission
+    if (window.proctoringClient) {
+      window.proctoringClient.isExplicitlySubmitting = true;
+      await window.proctoringClient.sendFinalLogs();
+    }
+
     QueLoader.submit_questions(url, (res) => {
       alert("Time is up! Your examination has been automatically submitted.");
       window.location.replace(res.callback);

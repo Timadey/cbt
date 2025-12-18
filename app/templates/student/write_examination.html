@@ -164,21 +164,29 @@
 {% block javascript %}
 {{ super() }}
 <!-- MediaPipe & LiveKit CDNs -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+{#
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>#}
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/holistic@0.5.1675471629/holistic.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
 
 <script type="module" src="{{url_for('static',filename='js/write_examination.js')}}"></script>
 <script type="module">
-    import { initAIProctoring } from "{{url_for('static',filename='js/proctoring.js')}}";
+    import { initEnhancedAIProctoring } from "{{url_for('static',filename='js/proctoring_enhanced.js')}}";
     $(function () {
-        const proctoringEnabled = {{ 'true' if question_paper.proctoring_enabled else 'false' }};
-        const livekitUrl = "{{ livekit_url }}";
-        const studentName = "{{ student_name }}";
-        console.log('proctoring enabled', proctoringEnabled);
-        if (proctoringEnabled) {
-            initAIProctoring("{{ question_paper.id }}", livekitUrl, studentName);
-        }
+        const proctoringEnabled = {{ question_paper.proctoring_enabled| tojson
+    }};
+    const livekitUrl = {{ livekit_url| tojson }};
+    const studentName = {{ student_name| tojson }};
+    const studentId = {{ current_user.id| tojson }};
+    const qpId = {{ question_paper.id| tojson }};
+
+    console.log('proctoring enabled', proctoringEnabled);
+    if (proctoringEnabled) {
+        initEnhancedAIProctoring(qpId, studentId, studentName, livekitUrl).then(client => {
+            window.proctoringClient = client;
+        });
+    }
     });
 </script>
 {% endblock javascript %}

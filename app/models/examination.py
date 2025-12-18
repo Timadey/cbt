@@ -1,11 +1,12 @@
 #!usr/bin/python3
 """Examination module provides basic functionalities for an examination
 """
+import json
 
 from app import db
 from .cbt_model import CbtModel
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, String, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, String, DateTime, ForeignKey, Integer, JSON
 from datetime import datetime
 
 
@@ -57,5 +58,6 @@ class Result(CbtModel, db.Model):
     score = Column(Integer, nullable=True)
     time_started = Column(DateTime, nullable=True)
     time_submitted = Column(DateTime, nullable=True)
+    proctoring_logs = Column(JSON, nullable=True, default=json.dumps([]))
     student = relationship('Student', viewonly=True, back_populates='results')
     question = relationship('QuestionPaper', viewonly=True, back_populates='results')

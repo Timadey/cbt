@@ -31,9 +31,34 @@ def start_examination() -> Response_:
         if not result or result.score or result.time_submitted:
             flash('Invalid or used examination token', 'warning')
             return redirect(url_for('student.start_examination'))
+        
         session['examination_token'] = token
+        
+        # Check if proctoring is enabled and verify identity
+        if result.question.proctoring_enabled:
+            return redirect(url_for('student.verify_identity'))
+            
         return redirect(url_for('student.write_examination'))
     return render_template('student/start_examination.html', form=form)
+
+
+@bp.route('/verify-identity', methods=['GET'])
+def verify_identity() -> Response_:
+    """Show identity verification page for proctored exams"""
+    token = session.get('examination_token')
+    if not token:
+        return redirect(url_for('student.start_examination'))
+        
+    result = Result.query.join(QuestionPaper).where(
+        Result.token == token).first_or_404()
+        
+    if not result.question.proctoring_enabled:
+        return redirect(url_for('student.write_examination'))
+        
+    return render_template('student/verify_identity.html', 
+                           result=result,
+                           student_name=result.student.name,
+                           student_id=result.student.id)
 
 
 @bp.route('/examination', methods=['GET'])
@@ -44,10 +69,18 @@ def write_examination() -> str:
 
     Raise 404 if the question paper is not found
     """
-    token = session['examination_token']
+    token = session.get('examination_token')
+    if not token:
+        return redirect(url_for('student.start_examination'))
+        
     result = Result.query.join(QuestionPaper).where(
         Result.token == token).first_or_404()
     
+    # Ensure identity is verified if proctoring is enabled
+    if result.question.proctoring_enabled and not session.get('identity_verified'):
+        flash('Please verify your identity before starting the examination.', 'info')
+        return redirect(url_for('student.verify_identity'))
+
     # Set start time if not already set
     if result.time_started is None:
         result.time_started = datetime.utcnow()
