@@ -20,6 +20,7 @@ login_manager.login_view = 'teacher.auth.login'
 
 from app.teacher import bp as teacher_bp
 from app.student import bp as student_bp
+from app.proctoring import bp as proctoring_bp
 from config import Config
 def create_app(config_class=Config):
     """Application factory function"""
@@ -39,6 +40,7 @@ def create_app(config_class=Config):
     # Register Blueprints
     app.register_blueprint(teacher_bp)
     app.register_blueprint(student_bp)
+    app.register_blueprint(proctoring_bp, url_prefix='/proctoring')
 
     return app
 

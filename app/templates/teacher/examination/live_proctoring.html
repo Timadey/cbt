@@ -1,0 +1,43 @@
+{% extends 'teacher/base.html' %}
+
+{% block breadcrumb_item %}
+{{super()}}
+{% import 'components/breadcrumb.html' as crumb %}
+{{crumb.item('Examination', url_for('teacher.examination.all'), 'page')}}
+{{crumb.item(question_paper.examination.name, url_for('teacher.examination.one', id=question_paper.examination.id),
+'page')}}
+{{crumb.item('Live Proctoring', '', 'page')}}
+{% endblock %}
+
+{% block app_content %}
+<div class="mb-4">
+    <h5 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        Live Proctoring: {{ question_paper.subject.name }}
+    </h5>
+    <p class="text-gray-500 dark:text-gray-400 text-sm">Monitoring students for {{ question_paper.examination.name }}
+    </p>
+</div>
+
+<div id="proctoring-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- Student video feeds will be injected here -->
+</div>
+
+<div id="no-students"
+    class="p-8 text-center bg-white rounded-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <p class="text-gray-500 dark:text-gray-400">Waiting for students to join...</p>
+</div>
+{% endblock %}
+
+{% block javascript %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+<script type="module" src="{{url_for('static',filename='js/live_proctoring.js')}}"></script>
+<script type="module">
+    import { initLiveProctoring } from "{{url_for('static',filename='js/live_proctoring.js')}}";
+    $(function () {
+        const livekitUrl = "{{ livekit_url }}";
+        const roomId = "exam-{{ question_paper.id }}";
+        initLiveProctoring(roomId, livekitUrl);
+    });
+</script>
+{% endblock %}

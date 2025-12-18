@@ -3,7 +3,7 @@
 import json
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for,\
-    request, jsonify, session, Response
+    request, jsonify, session, Response, current_app
 from flask_login import login_required
 from flask_cors import cross_origin
 from app import db
@@ -12,7 +12,6 @@ from app.models import Subject, QuestionPaper, Result
 from app.teacher.examination import bp
 from app.teacher.examination.forms import ExaminationForm
 from app.teacher.student.forms import StudentForm
-
 from typing import Union
 
 Response_ = Union[str, Response]
@@ -172,3 +171,44 @@ def question_paper(id: int) -> Response:
             'score': score,
             'callback': url_for('student.start_examination')
         })
+        
+@bp.route('/proctoring/toggle/<int:id>', methods=['POST'])
+@login_required
+def toggle_proctoring(id: int) -> Response:
+    """Toggle proctoring_enabled for a question paper"""
+    question_paper = QuestionPaper.query.where(
+        QuestionPaper.id == id).one_or_404()
+    question_paper.proctoring_enabled = not question_paper.proctoring_enabled
+    db.session.add(question_paper)
+    db.session.commit()
+    return jsonify({
+        'success': True,
+        'proctoring_enabled': question_paper.proctoring_enabled,
+        'message': f"Proctoring {'enabled' if question_paper.proctoring_enabled else 'disabled'}"
+    })
+
+@bp.route('/proctoring/<int:id>', methods=['GET'])
+@login_required
+def live_proctoring(id: int) -> str:
+    """Live proctoring dashboard for a question paper"""
+    question_paper = QuestionPaper.query.where(
+        QuestionPaper.id == id).one_or_404()
+    return render_template('teacher/examination/live_proctoring.html', 
+                           question_paper=question_paper,
+                           livekit_url=current_app.config.get('LIVEKIT_URL'),)
+
+@bp.route('/duration/update/<int:id>', methods=['POST'])
+@login_required
+def update_duration(id: int) -> Response:
+    """Update duration_minutes for a question paper"""
+    question_paper = QuestionPaper.query.get_or_404(id)
+    data = request.json
+    duration = data.get('duration')
+    if duration is not None:
+        try:
+            question_paper.duration_minutes = int(duration)
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Duration updated successfully'})
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Invalid duration value'}), 400
+    return jsonify({'success': False, 'message': 'Missing duration field'}), 400

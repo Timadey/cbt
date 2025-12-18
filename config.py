@@ -30,3 +30,8 @@ class Config():
     SESSION_TYPE = 'filesystem'
     SESSION_SQLACHEMY = db
     # REMEMBER_COOKIE_DURATION = timedelta
+
+    # LiveKit
+    LIVEKIT_API_KEY = getenv('LIVEKIT_API_KEY')
+    LIVEKIT_API_SECRET = getenv('LIVEKIT_API_SECRET')
+    LIVEKIT_URL = getenv('LIVEKIT_URL')

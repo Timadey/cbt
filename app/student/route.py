@@ -1,10 +1,12 @@
 #!/usr/bin/env pythons
 """Student routes for student to write examinations"""
-from flask import flash, redirect, render_template, url_for, session, Response
+from flask import flash, redirect, render_template, url_for, session, Response, current_app
 from app.student import bp
 from app.student.forms import TokenForm
 from app.models import Result, QuestionPaper
 from typing import Union
+from datetime import datetime
+from app import db
 
 Response_ = Union[str, Response]
 
@@ -45,6 +47,16 @@ def write_examination() -> str:
     token = session['examination_token']
     result = Result.query.join(QuestionPaper).where(
         Result.token == token).first_or_404()
+    
+    # Set start time if not already set
+    if result.time_started is None:
+        result.time_started = datetime.utcnow()
+        db.session.commit()
+
     question_paper = result.question
     return render_template('student/write_examination.html',
-                           question_paper=question_paper, token=token)
+                           question_paper=question_paper, token=token,
+                           livekit_url=current_app.config.get('LIVEKIT_URL'),
+                           student_name=result.student.name,
+                           time_started=result.time_started.isoformat() + 'Z',
+                           duration_minutes=question_paper.duration_minutes)

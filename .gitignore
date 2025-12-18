@@ -1,6 +1,6 @@
 venv
 .env
-migrations
+#migrations
 node_modules
 package-lock.json
 DataTables
@@ -9,3 +9,4 @@ __pycache__
 app/__pycache__
 __pycache__/
 *.pyc
+.idea

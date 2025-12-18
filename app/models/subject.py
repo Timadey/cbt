@@ -33,6 +33,8 @@ class QuestionPaper(CbtModel, db.Model):
     students = relationship(
         'Student', secondary='results', back_populates='question_papers')
     results = relationship('Result', backref='question_paper')
+    proctoring_enabled = Column(db.Boolean, default=False, nullable=False)
+    duration_minutes = Column(db.Integer, default=60, nullable=False)
 
     @property
     def questions_dict(self) -> List[dict]:

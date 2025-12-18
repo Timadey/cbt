@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  cbtim:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env  # This is the correct way to load environment variables
+    restart: unless-stopped
+    volumes:
+      - .:/cbt  # Maps your local folder to the container's /cbt folder
+      - ./models:/root/.insightface # Adjust based on where the library expects models
+    # If using Flask (as per your Dockerfile):
+    command: flask run --host=0.0.0.0 --port=5000

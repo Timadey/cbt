@@ -1,6 +1,6 @@
 import { set_question, QuestionLoader } from './add_question.js';
 $(function () {
-  function style_pagination (num) {
+  function style_pagination(num) {
     $("li[name='question-btn']").removeAttr('style');
     $(`li[name='question-btn'][id='${num}']`).attr('style', 'background-color:black;color:white');
   }
@@ -30,7 +30,7 @@ $(function () {
       QueLoader.curr_question_num = QueLoader.load_question(next_question_num);
       style_pagination(next_question_num);
     }
-  // console.log(next_question_num)
+    // console.log(next_question_num)
   });
 
   // When Prev Button is clicked
@@ -52,7 +52,8 @@ $(function () {
     QueLoader.save_question();
     console.log(QueLoader.questions);
     QueLoader.submit_questions(url, (res) => {
-      alert(`Your score is ${res.score}/${Object.keys(QueLoader.questions).length}`);
+        alert("Examination submitted successfully!");
+      // alert(`Your score is ${res.score}/${Object.keys(QueLoader.questions).length}`);
       window.location.replace(res.callback);
     });
   });
@@ -74,8 +75,50 @@ $(function () {
     style_pagination(e.target.id);
   });
 
+  // Timer Logic
+  const timeStarted = new Date($('#time-started').data('time'));
+  const durationMinutes = parseInt($('#duration-minutes').data('duration'));
+  const timerDisplay = $('#timer-display');
+  const countdownContainer = $('#countdown-timer');
+
+  if (durationMinutes > 0) {
+    const endTime = new Date(timeStarted.getTime() + durationMinutes * 60000);
+
+    const timerInterval = setInterval(() => {
+      const now = new Date();
+      const remaining = endTime - now;
+
+      if (remaining <= 0) {
+        clearInterval(timerInterval);
+        timerDisplay.text("00:00:00");
+        autoSubmit();
+      } else {
+        const h = Math.floor(remaining / 3600000);
+        const m = Math.floor((remaining % 3600000) / 60000);
+        const s = Math.floor((remaining % 60000) / 1000);
+        timerDisplay.text(
+          `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+        );
+
+        // Warning colors
+        if (remaining < 300000) { // 5 minutes
+          countdownContainer.addClass('border-red-500 text-red-600 dark:text-red-400');
+        }
+      }
+    }, 1000);
+  }
+
+  function autoSubmit() {
+    QueLoader.save_question();
+    QueLoader.submit_questions(url, (res) => {
+      alert("Time is up! Your examination has been automatically submitted.");
+      window.location.replace(res.callback);
+    });
+  }
+
   // Load first question
   let q = Object.keys(QueLoader.questions)[0];
   $('#spinner').hide(500, () => {
-    QueLoader.load_question(q);});
+    QueLoader.load_question(q);
+  });
 });

@@ -55,6 +55,7 @@ class Result(CbtModel, db.Model):
     token = Column(Integer, autoincrement=True,
                    nullable=False, default=microsecond)
     score = Column(Integer, nullable=True)
+    time_started = Column(DateTime, nullable=True)
     time_submitted = Column(DateTime, nullable=True)
     student = relationship('Student', viewonly=True, back_populates='results')
     question = relationship('QuestionPaper', viewonly=True, back_populates='results')
